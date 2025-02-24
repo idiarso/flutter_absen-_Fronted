@@ -7,15 +7,16 @@ part 'jurnal_pkl_model.g.dart';
 class JurnalPKL with _$JurnalPKL {
   const factory JurnalPKL({
     int? id,
-    required int userId,
-    required String tanggal,
+    int? userId,
+    String? tanggal,
     required String kegiatan,
-    String? dokumentasi,
-    required String status, // draft, submitted, approved, rejected
+    @Default([]) List<int> dokumentasi,
+    @Default('draft') String status, // draft, submitted, approved, rejected
     String? catatan,
-    required DateTime createdAt,
-    required DateTime updatedAt,
-    String? lokasi,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    required String lokasi,
+    String? filename,
   }) = _JurnalPKL;
 
   factory JurnalPKL.fromJson(Map<String, dynamic> json) => _$JurnalPKLFromJson(json);

@@ -6,7 +6,7 @@ class PKLGetJurnalDetailUseCase {
 
   PKLGetJurnalDetailUseCase(this._provider);
 
-  Future<JurnalPKL> execute(int id) async {
+  Future<JurnalPKL> call(int id) async {
     return await _provider.getJurnalDetail(id);
   }
 }

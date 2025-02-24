@@ -47,10 +47,9 @@ class JurnalPKLView extends GetView<JurnalPKLController> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildStatCard('Total', progress['total']?.toString() ?? '0', Colors.blue),
-            _buildStatCard('Disetujui', progress['approved']?.toString() ?? '0', Colors.green),
-            _buildStatCard('Pending', progress['pending']?.toString() ?? '0', Colors.orange),
-            _buildStatCard('Ditolak', progress['rejected']?.toString() ?? '0', Colors.red),
+            _buildStatCard('Total Hari', progress.totalDays.toString(), Colors.blue),
+            _buildStatCard('Selesai', progress.completedDays.toString(), Colors.green),
+            _buildStatCard('Progress', '${(progress.progressPercentage * 100).toStringAsFixed(1)}%', Colors.orange),
           ],
         ),
       );
@@ -73,43 +72,45 @@ class JurnalPKLView extends GetView<JurnalPKLController> {
   }
 
   Widget _buildFilters() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          TextField(
-            decoration: const InputDecoration(
-              hintText: 'Cari jurnal...',
-              prefixIcon: Icon(Icons.search),
+    return Builder(
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                hintText: 'Cari jurnal...',
+                prefixIcon: Icon(Icons.search),
+              ),
+              onChanged: controller.updateSearchQuery,
             ),
-            onChanged: controller.updateSearchQuery,
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: controller.selectedStatus.value,
-                  decoration: const InputDecoration(
-                    labelText: 'Status',
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: controller.selectedStatus.value,
+                    decoration: const InputDecoration(
+                      labelText: 'Status',
+                    ),
+                    items: const [
+                      DropdownMenuItem(value: null, child: Text('Semua')),
+                      DropdownMenuItem(value: 'draft', child: Text('Draft')),
+                      DropdownMenuItem(value: 'submitted', child: Text('Submitted')),
+                      DropdownMenuItem(value: 'approved', child: Text('Approved')),
+                      DropdownMenuItem(value: 'rejected', child: Text('Rejected')),
+                    ],
+                    onChanged: controller.updateStatusFilter,
                   ),
-                  items: const [
-                    DropdownMenuItem(value: null, child: Text('Semua')),
-                    DropdownMenuItem(value: 'draft', child: Text('Draft')),
-                    DropdownMenuItem(value: 'submitted', child: Text('Submitted')),
-                    DropdownMenuItem(value: 'approved', child: Text('Approved')),
-                    DropdownMenuItem(value: 'rejected', child: Text('Rejected')),
-                  ],
-                  onChanged: controller.updateStatusFilter,
                 ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.date_range),
-                onPressed: () => _showDateRangePicker(context),
-              ),
-            ],
-          ),
-        ],
+                IconButton(
+                  icon: const Icon(Icons.date_range),
+                  onPressed: () => _showDateRangePicker(context),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -193,8 +194,8 @@ class JurnalPKLView extends GetView<JurnalPKLController> {
                 ),
                 items: controller.locations
                     .map((location) => DropdownMenuItem(
-                          value: location['name'].toString(),
-                          child: Text(location['name'].toString()),
+                          value: location.name,
+                          child: Text(location.name),
                         ))
                     .toList(),
                 onChanged: (value) => controller.lokasiController.text = value ?? '',

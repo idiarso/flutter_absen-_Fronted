@@ -1,4 +1,4 @@
-import '../../data/models/learning_model.dart';
+import '../../data/source/learning_api_service.dart';
 import '../../data/providers/learning_provider.dart';
 
 class LearningGetActivitiesUseCase {
@@ -7,7 +7,6 @@ class LearningGetActivitiesUseCase {
   LearningGetActivitiesUseCase(this._provider);
 
   Future<List<LearningActivity>> call() async {
-    final result = await _provider.getActivities();
-    return result.map((e) => LearningActivity.fromJson(e)).toList();
+    return await _provider.getActivities();
   }
 }

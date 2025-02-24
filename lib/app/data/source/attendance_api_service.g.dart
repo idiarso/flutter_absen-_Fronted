@@ -3,16 +3,51 @@
 part of 'attendance_api_service.dart';
 
 // **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+AttendanceRecord _$AttendanceRecordFromJson(Map<String, dynamic> json) =>
+    AttendanceRecord(
+      id: (json['id'] as num).toInt(),
+      userId: json['userId'] as String,
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      type: json['type'] as String,
+      status: json['status'] as String,
+      notes: json['notes'] as String?,
+    );
+
+Map<String, dynamic> _$AttendanceRecordToJson(AttendanceRecord instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'userId': instance.userId,
+      'timestamp': instance.timestamp.toIso8601String(),
+      'type': instance.type,
+      'status': instance.status,
+      'notes': instance.notes,
+    };
+
+AttendanceResponse _$AttendanceResponseFromJson(Map<String, dynamic> json) =>
+    AttendanceResponse(
+      success: json['success'] as bool,
+      message: json['message'] as String,
+      data: json['data'],
+    );
+
+Map<String, dynamic> _$AttendanceResponseToJson(AttendanceResponse instance) =>
+    <String, dynamic>{
+      'success': instance.success,
+      'message': instance.message,
+      'data': instance.data,
+    };
+
+// **************************************************************************
 // RetrofitGenerator
 // **************************************************************************
 
-// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers
+// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations
 
 class _AttendanceApiService implements AttendanceApiService {
-  _AttendanceApiService(
-    this._dio, {
-    this.baseUrl,
-  }) {
+  _AttendanceApiService(this._dio, {this.baseUrl, this.errorLogger}) {
     baseUrl ??= 'https://app.sijasmkn1punggelan.org';
   }
 
@@ -20,93 +55,97 @@ class _AttendanceApiService implements AttendanceApiService {
 
   String? baseUrl;
 
+  final ParseErrorLogger? errorLogger;
+
   @override
-  Future<HttpResponse<DataState<dynamic>>> getAttendanceToday() async {
-    const _extra = <String, dynamic>{};
+  Future<AttendanceResponse> getAttendanceToday() async {
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<HttpResponse<DataState<dynamic>>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/api/get-attendance-today',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final value = DataState<dynamic>.fromJson(_result.data!);
-    final httpResponse = HttpResponse(value, _result);
-    return httpResponse;
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<AttendanceResponse>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/get-attendance-today',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AttendanceResponse _value;
+    try {
+      _value = AttendanceResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
   }
 
   @override
-  Future<HttpResponse<DataState<dynamic>>> sendAttendance(
-      {required Map<String, dynamic> body}) async {
-    const _extra = <String, dynamic>{};
+  Future<AttendanceResponse> sendAttendance(Map<String, dynamic> body) async {
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(body);
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<HttpResponse<DataState<dynamic>>>(Options(
-      method: 'POST',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/api/store-attendance',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final value = DataState<dynamic>.fromJson(_result.data!);
-    final httpResponse = HttpResponse(value, _result);
-    return httpResponse;
+    final _options = _setStreamType<AttendanceResponse>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/store-attendance',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late AttendanceResponse _value;
+    try {
+      _value = AttendanceResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
   }
 
   @override
-  Future<HttpResponse<DataState<dynamic>>> getAttendanceByMonthYear({
-    required String month,
-    required String year,
-  }) async {
-    const _extra = <String, dynamic>{};
+  Future<List<AttendanceRecord>> getAttendanceByMonthYear(
+    String month,
+    String year,
+  ) async {
+    final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
-    final Map<String, dynamic>? _data = null;
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<HttpResponse<DataState<dynamic>>>(Options(
-      method: 'GET',
-      headers: _headers,
-      extra: _extra,
-    )
-            .compose(
-              _dio.options,
-              '/api/get-attendance-by-month-year/${month}/${year}',
-              queryParameters: queryParameters,
-              data: _data,
-            )
-            .copyWith(
-                baseUrl: _combineBaseUrls(
-              _dio.options.baseUrl,
-              baseUrl,
-            ))));
-    final value = DataState<dynamic>.fromJson(_result.data!);
-    final httpResponse = HttpResponse(value, _result);
-    return httpResponse;
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<List<AttendanceRecord>>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/get-attendance-by-month-year/${month}/${year}',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<List<dynamic>>(_options);
+    late List<AttendanceRecord> _value;
+    try {
+      _value =
+          _result.data!
+              .map(
+                (dynamic i) =>
+                    AttendanceRecord.fromJson(i as Map<String, dynamic>),
+              )
+              .toList();
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    return _value;
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
@@ -122,10 +161,7 @@ class _AttendanceApiService implements AttendanceApiService {
     return requestOptions;
   }
 
-  String _combineBaseUrls(
-    String dioBaseUrl,
-    String? baseUrl,
-  ) {
+  String _combineBaseUrls(String dioBaseUrl, String? baseUrl) {
     if (baseUrl == null || baseUrl.trim().isEmpty) {
       return dioBaseUrl;
     }

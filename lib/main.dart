@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
       title: 'Skansapung Presensi',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.red),
-      initialRoute: Routes.INITIAL,
+      initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
       defaultTransition: Transition.fade,
     );

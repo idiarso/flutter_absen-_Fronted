@@ -5,7 +5,7 @@ class LearningProvider {
 
   LearningProvider(this._apiService);
 
-  Future<List<Map<String, dynamic>>> getActivities() async {
+  Future<List<LearningActivity>> getActivities() async {
     try {
       return await _apiService.getActivities();
     } catch (e) {
@@ -13,7 +13,7 @@ class LearningProvider {
     }
   }
 
-  Future<Map<String, dynamic>> getProgress() async {
+  Future<LearningProgress> getProgress() async {
     try {
       return await _apiService.getProgress();
     } catch (e) {

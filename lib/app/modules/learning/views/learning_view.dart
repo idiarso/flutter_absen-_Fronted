@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/learning_controller.dart';
-import '../../../data/models/learning_model.dart';
+import '../../../data/source/learning_api_service.dart';
 
 class LearningView extends GetView<LearningController> {
   const LearningView({Key? key}) : super(key: key);
@@ -26,7 +26,7 @@ class LearningView extends GetView<LearningController> {
                       children: [
                         _buildProgressSection(),
                         const SizedBox(height: 24),
-                        _buildActivitiesSection(),
+                        _buildActivitiesList(),
                       ],
                     ),
                   ),
@@ -61,7 +61,7 @@ class LearningView extends GetView<LearningController> {
             ),
             const SizedBox(height: 16),
             LinearProgressIndicator(
-              value: progress.completedActivities / progress.totalActivities,
+              value: progress.progressPercentage / 100,
               backgroundColor: Colors.grey[200],
               valueColor: AlwaysStoppedAnimation<Color>(
                 Theme.of(Get.context!).primaryColor,
@@ -69,7 +69,7 @@ class LearningView extends GetView<LearningController> {
             ),
             const SizedBox(height: 8),
             Text(
-              '${progress.completedActivities} dari ${progress.totalActivities} aktivitas selesai',
+              '${progress.completedActivities} of ${progress.totalActivities} activities completed',
               style: const TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 16),
@@ -119,28 +119,25 @@ class LearningView extends GetView<LearningController> {
     );
   }
 
-  Widget _buildActivitiesSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Aktivitas Pembelajaran',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+  Widget _buildActivitiesList() {
+    final activities = controller.activities;
+    if (activities.isEmpty) {
+      return Center(
+        child: Text(
+          'No activities available',
+          style: Get.textTheme.titleMedium,
         ),
-        const SizedBox(height: 16),
-        ListView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: controller.activities.length,
-          itemBuilder: (context, index) {
-            final activity = controller.activities[index];
-            return _buildActivityCard(activity);
-          },
-        ),
-      ],
+      );
+    }
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: activities.length,
+      itemBuilder: (context, index) {
+        final activity = activities[index];
+        return _buildActivityCard(activity);
+      },
     );
   }
 

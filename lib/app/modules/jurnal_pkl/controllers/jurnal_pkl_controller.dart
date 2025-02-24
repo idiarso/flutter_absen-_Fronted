@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../data/models/jurnal_pkl_model.dart';
+import '../../../data/source/pkl_api_service.dart';
 import '../../../module/use_case/pkl_get_locations.dart';
 import '../../../module/use_case/pkl_get_progress.dart';
 import '../../../module/use_case/pkl_get_student.dart';
@@ -30,9 +31,9 @@ class JurnalPKLController extends GetxController {
   );
 
   // State variables
-  final locations = <Map<String, dynamic>>[].obs;
-  final studentData = Rxn<Map<String, dynamic>>();
-  final progress = Rxn<Map<String, dynamic>>();
+  final locations = <PKLLocation>[].obs;
+  final studentData = Rxn<PKLStudent>();
+  final progress = Rxn<PKLProgress>();
   final jurnalList = <JurnalPKL>[].obs;
   final selectedJurnal = Rxn<JurnalPKL>();
   final isLoading = false.obs;
@@ -82,7 +83,7 @@ class JurnalPKLController extends GetxController {
 
   Future<void> fetchLocations() async {
     try {
-      locations.value = await _getLocationsUseCase.execute();
+      locations.value = await _getLocationsUseCase();
     } catch (e) {
       Get.snackbar('Error', 'Gagal memuat lokasi PKL');
       rethrow;
@@ -91,7 +92,7 @@ class JurnalPKLController extends GetxController {
 
   Future<void> fetchStudentData() async {
     try {
-      studentData.value = await _getStudentUseCase.execute();
+      studentData.value = await _getStudentUseCase();
     } catch (e) {
       Get.snackbar('Error', 'Gagal memuat data siswa');
       rethrow;
@@ -100,7 +101,7 @@ class JurnalPKLController extends GetxController {
 
   Future<void> fetchProgress() async {
     try {
-      progress.value = await _getProgressUseCase.execute();
+      progress.value = await _getProgressUseCase();
     } catch (e) {
       Get.snackbar('Error', 'Gagal memuat progress PKL');
       rethrow;
@@ -112,7 +113,7 @@ class JurnalPKLController extends GetxController {
       final formattedStartDate = startDate.value?.toIso8601String();
       final formattedEndDate = endDate.value?.toIso8601String();
       
-      jurnalList.value = await _getJurnalListUseCase.execute(
+      jurnalList.value = await _getJurnalListUseCase(
         search: searchQuery.value,
         status: selectedStatus.value,
         startDate: formattedStartDate,
@@ -126,7 +127,7 @@ class JurnalPKLController extends GetxController {
 
   Future<void> fetchJurnalDetail(int id) async {
     try {
-      selectedJurnal.value = await _getJurnalDetailUseCase.execute(id);
+      selectedJurnal.value = await _getJurnalDetailUseCase(id);
     } catch (e) {
       Get.snackbar('Error', 'Gagal memuat detail jurnal');
       rethrow;
@@ -135,7 +136,7 @@ class JurnalPKLController extends GetxController {
 
   Future<void> updateJurnalStatus(int id, String status, {String? catatan}) async {
     try {
-      await _updateJurnalStatusUseCase.execute(id, status, catatan: catatan);
+      await _updateJurnalStatusUseCase(id, status, catatan: catatan);
       await fetchJurnalList(); // Refresh list after update
       Get.snackbar('Sukses', 'Status jurnal berhasil diperbarui');
     } catch (e) {
@@ -156,12 +157,14 @@ class JurnalPKLController extends GetxController {
     }
 
     try {
-      await _submitDailyReportUseCase.execute(
+      final jurnal = JurnalPKL(
         kegiatan: kegiatanController.text,
         lokasi: lokasiController.text,
         dokumentasi: imageBytes.value!,
         filename: imagePath.value!.split('/').last,
       );
+      
+      await _submitDailyReportUseCase(jurnal);
       
       // Clear form
       kegiatanController.clear();
@@ -202,9 +205,9 @@ class JurnalPKLController extends GetxController {
     fetchJurnalList();
   }
 
-  Future<void> updateDateRange(DateTime? start, DateTime? end) async {
+  void updateDateRange(DateTime? start, DateTime? end) {
     startDate.value = start;
     endDate.value = end;
-    await fetchJurnalList();
+    fetchJurnalList();
   }
 }

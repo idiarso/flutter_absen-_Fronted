@@ -6,7 +6,7 @@ class PKLGetJurnalListUseCase {
 
   PKLGetJurnalListUseCase(this._provider);
 
-  Future<List<JurnalPKL>> execute({
+  Future<List<JurnalPKL>> call({
     String? search,
     String? status,
     String? startDate,

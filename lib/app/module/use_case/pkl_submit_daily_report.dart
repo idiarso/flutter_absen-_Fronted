@@ -7,6 +7,11 @@ class PKLSubmitDailyReportUseCase {
   PKLSubmitDailyReportUseCase(this._provider);
 
   Future<void> call(JurnalPKL jurnal) async {
-    await _provider.submitDailyReport(jurnal);
+    await _provider.submitJurnal(
+      kegiatan: jurnal.kegiatan,
+      lokasi: jurnal.lokasi,
+      dokumentasi: jurnal.dokumentasi,
+      filename: jurnal.filename ?? 'dokumentasi.jpg',
+    );
   }
 }

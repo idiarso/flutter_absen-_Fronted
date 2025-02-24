@@ -5,7 +5,7 @@ class PKLUpdateJurnalStatusUseCase {
 
   PKLUpdateJurnalStatusUseCase(this._provider);
 
-  Future<void> execute(int id, String status, {String? catatan}) async {
+  Future<void> call(int id, String status, {String? catatan}) async {
     await _provider.updateJurnalStatus(id, status, catatan: catatan);
   }
 }

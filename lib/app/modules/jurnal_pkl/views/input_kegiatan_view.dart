@@ -19,7 +19,7 @@ class InputKegiatanView extends GetView<JurnalPKLController> {
               title: const Text('Kamera'),
               onTap: () {
                 Navigator.pop(context);
-                controller.pickImage(ImageSource.camera);
+                controller.pickImage();
               },
             ),
             ListTile(
@@ -27,7 +27,7 @@ class InputKegiatanView extends GetView<JurnalPKLController> {
               title: const Text('Galeri'),
               onTap: () {
                 Navigator.pop(context);
-                controller.pickImage(ImageSource.gallery);
+                controller.pickImage();
               },
             ),
           ],
@@ -69,15 +69,15 @@ class InputKegiatanView extends GetView<JurnalPKLController> {
                 return;
               }
 
-              final jurnal = JurnalPKL(
-                userId: controller.studentData['id'] ?? 0,
-                tanggal: controller.selectedDate.value,
-                kegiatan: kegiatanController.text,
-                lokasi: lokasiController.text,
-                status: 'draft',
-                createdAt: DateTime.now(),
-                updatedAt: DateTime.now(),
-              );
+              final jurnal = {
+                'userId': controller.studentData.value?['id'] ?? 0,
+                'tanggal': DateTime.now().toIso8601String(),
+                'kegiatan': kegiatanController.text,
+                'lokasi': lokasiController.text,
+                'status': 'draft',
+                'createdAt': DateTime.now().toIso8601String(),
+                'updatedAt': DateTime.now().toIso8601String(),
+              };
 
               controller.submitJurnal(jurnal);
             },
@@ -100,7 +100,7 @@ class InputKegiatanView extends GetView<JurnalPKLController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Lokasi PKL: ${controller.studentData['lokasi'] ?? 'Belum ada'}',
+                              'Lokasi PKL: ${controller.studentData.value?['lokasi'] ?? 'Belum ada'}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -108,7 +108,7 @@ class InputKegiatanView extends GetView<JurnalPKLController> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Pembimbing: ${controller.studentData['pembimbing'] ?? 'Belum ada'}',
+                              'Pembimbing: ${controller.studentData.value?['pembimbing'] ?? 'Belum ada'}',
                               style: const TextStyle(fontSize: 14),
                             ),
                           ],

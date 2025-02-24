@@ -25,7 +25,7 @@ class PKLProvider {
     }
   }
 
-  Future<List<Map<String, dynamic>>> getLocations() async {
+  Future<List<PKLLocation>> getLocations() async {
     try {
       return await _apiService.getLocations();
     } catch (e) {
@@ -33,7 +33,7 @@ class PKLProvider {
     }
   }
 
-  Future<Map<String, dynamic>> getStudentPKL() async {
+  Future<PKLStudent> getStudentPKL() async {
     try {
       return await _apiService.getStudentPKL();
     } catch (e) {
@@ -59,7 +59,7 @@ class PKLProvider {
     }
   }
 
-  Future<Map<String, dynamic>> getProgress() async {
+  Future<PKLProgress> getProgress() async {
     try {
       return await _apiService.getProgress();
     } catch (e) {

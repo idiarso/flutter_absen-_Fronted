@@ -1,4 +1,4 @@
-import '../../data/models/learning_model.dart';
+import '../../data/source/learning_api_service.dart';
 import '../../data/providers/learning_provider.dart';
 
 class LearningSubmitActivityUseCase {

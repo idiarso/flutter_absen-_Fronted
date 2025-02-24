@@ -1,4 +1,4 @@
-import '../../data/models/learning_model.dart';
+import '../../data/source/learning_api_service.dart';
 import '../../data/providers/learning_provider.dart';
 
 class LearningGetProgressUseCase {
@@ -7,7 +7,6 @@ class LearningGetProgressUseCase {
   LearningGetProgressUseCase(this._provider);
 
   Future<LearningProgress> call() async {
-    final result = await _provider.getProgress();
-    return LearningProgress.fromJson(result);
+    return await _provider.getProgress();
   }
 }
