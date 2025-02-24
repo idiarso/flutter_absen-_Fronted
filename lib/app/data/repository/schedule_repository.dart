@@ -11,27 +11,41 @@ class ScheduleRepositoryImpl extends ScheduleRepository {
   ScheduleRepositoryImpl(this._scheduleApiService);
 
   @override
-  Future<DataState<ScheduleEntity?>> get() {
-    return handleResponse(
-      () => _scheduleApiService.get(),
-      (json) {
-        if (json != null) {
-          final data = ScheduleEntity.fromJson(json);
+  Future<DataState<ScheduleEntity?>> get() async {
+    try {
+      final response = await _scheduleApiService.get();
+      if (response.response.statusCode == 200 && response.data.success) {
+        if (response.data.schedules.isNotEmpty) {
+          final data = ScheduleEntity.fromJson(response.data.schedules[0].toJson());
           SharedPreferencesHelper.setString(
               PREF_START_SHIFT, data.shift.startTime);
           SharedPreferencesHelper.setString(PREF_END_SHIFT, data.shift.endTime);
-          return data;
-        } else
-          return null;
-      },
-    );
+          return DataSuccess(data);
+        }
+        return const DataSuccess(null);
+      }
+      return DataFailed(
+        response.response.statusMessage ?? 'Unknown error occurred',
+        response.response.statusCode,
+      );
+    } catch (e) {
+      return DataFailed(e.toString(), 500);
+    }
   }
 
   @override
-  Future<DataState> banned() {
-    return handleResponse(
-      () => _scheduleApiService.banned(),
-      (json) => null,
-    );
+  Future<DataState<bool>> banned() async {
+    try {
+      final response = await _scheduleApiService.banned();
+      if (response.response.statusCode == 200) {
+        return DataSuccess(response.data.success);
+      }
+      return DataFailed(
+        response.response.statusMessage ?? 'Unknown error occurred',
+        response.response.statusCode,
+      );
+    } catch (e) {
+      return DataFailed(e.toString(), 500);
+    }
   }
 }

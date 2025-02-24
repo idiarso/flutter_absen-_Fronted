@@ -17,26 +17,42 @@ class LearningView extends GetView<LearningController> {
         () => controller.isLoading.value
             ? const Center(child: CircularProgressIndicator())
             : RefreshIndicator(
-                onRefresh: controller.loadData,
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildProgressSection(),
-                        const SizedBox(height: 24),
-                        _buildActivitiesList(),
-                      ],
-                    ),
-                  ),
-                ),
+                onRefresh: controller.fetchData,
+                child: controller.error.value != null
+                    ? Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Error: ${controller.error.value}',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: controller.fetchData,
+                              child: const Text('Retry'),
+                            ),
+                          ],
+                        ),
+                      )
+                    : SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildProgressSection(),
+                              const SizedBox(height: 24),
+                              _buildActivitiesList(),
+                            ],
+                          ),
+                        ),
+                      ),
               ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Navigate to create activity
-        },
+        onPressed: () => Get.toNamed('/learning/create'),
         child: const Icon(Icons.add),
       ),
     );
@@ -69,29 +85,11 @@ class LearningView extends GetView<LearningController> {
             ),
             const SizedBox(height: 8),
             Text(
-              '${progress.completedActivities} of ${progress.totalActivities} activities completed',
-              style: const TextStyle(color: Colors.grey),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildStatCard(
-                  'Rata-rata Nilai',
-                  '${progress.averageScore.toStringAsFixed(1)}',
-                  Icons.grade,
-                ),
-                _buildStatCard(
-                  'Jenis Selesai',
-                  '${progress.completedTypes.length}',
-                  Icons.check_circle,
-                ),
-                _buildStatCard(
-                  'Total Aktivitas',
-                  '${progress.totalActivities}',
-                  Icons.assignment,
-                ),
-              ],
+              '${progress.completedActivities} dari ${progress.totalActivities} aktivitas selesai',
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
+              ),
             ),
           ],
         ),
@@ -99,33 +97,16 @@ class LearningView extends GetView<LearningController> {
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon) {
-    return Column(
-      children: [
-        Icon(icon, color: Theme.of(Get.context!).primaryColor),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          title,
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
-        ),
-      ],
-    );
-  }
-
   Widget _buildActivitiesList() {
     final activities = controller.activities;
     if (activities.isEmpty) {
-      return Center(
+      return const Center(
         child: Text(
-          'No activities available',
-          style: Get.textTheme.titleMedium,
+          'Belum ada aktivitas pembelajaran',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey,
+          ),
         ),
       );
     }
@@ -136,109 +117,47 @@ class LearningView extends GetView<LearningController> {
       itemCount: activities.length,
       itemBuilder: (context, index) {
         final activity = activities[index];
-        return _buildActivityCard(activity);
+        return Card(
+          margin: const EdgeInsets.only(bottom: 8.0),
+          child: ListTile(
+            title: Text(activity.title),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(activity.description),
+                const SizedBox(height: 4),
+                Text(
+                  'Status: ${activity.status}',
+                  style: TextStyle(
+                    color: _getStatusColor(activity.status),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.chevron_right),
+              onPressed: () => Get.toNamed(
+                '/learning/detail',
+                arguments: activity,
+              ),
+            ),
+          ),
+        );
       },
     );
   }
 
-  Widget _buildActivityCard(LearningActivity activity) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: InkWell(
-        onTap: () {
-          // TODO: Navigate to activity detail
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      activity.title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  _buildStatusChip(activity.status),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                activity.description,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Tenggat: ${_formatDate(activity.dueDate)}',
-                    style: const TextStyle(color: Colors.grey),
-                  ),
-                  if (activity.score != null)
-                    Text(
-                      'Nilai: ${activity.score!.toStringAsFixed(1)}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green,
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatusChip(String status) {
-    Color color;
-    String text;
-
+  Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'completed':
-        color = Colors.green;
-        text = 'Selesai';
-        break;
+        return Colors.green;
       case 'in_progress':
-        color = Colors.orange;
-        text = 'Sedang Dikerjakan';
-        break;
-      case 'pending':
-        color = Colors.grey;
-        text = 'Belum Dikerjakan';
-        break;
+        return Colors.orange;
+      case 'not_started':
+        return Colors.grey;
       default:
-        color = Colors.grey;
-        text = status;
+        return Colors.grey;
     }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
   }
 }

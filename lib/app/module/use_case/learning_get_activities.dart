@@ -1,12 +1,13 @@
 import '../../data/source/learning_api_service.dart';
-import '../../data/providers/learning_provider.dart';
+import '../../data/repository/learning_repository.dart';
+import '../../../core/data/data_state.dart';
 
 class LearningGetActivitiesUseCase {
-  final LearningProvider _provider;
+  final LearningRepository _repository;
 
-  LearningGetActivitiesUseCase(this._provider);
+  LearningGetActivitiesUseCase(this._repository);
 
-  Future<List<LearningActivity>> call() async {
-    return await _provider.getActivities();
+  Future<DataState<List<LearningActivity>>> call() async {
+    return await _repository.getActivities();
   }
 }

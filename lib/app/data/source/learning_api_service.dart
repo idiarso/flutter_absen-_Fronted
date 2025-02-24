@@ -5,6 +5,22 @@ import 'package:json_annotation/json_annotation.dart';
 part 'learning_api_service.g.dart';
 
 @JsonSerializable()
+class LearningResponse {
+    final bool success;
+    final String message;
+    final dynamic data;
+
+    LearningResponse({
+        required this.success,
+        required this.message,
+        required this.data,
+    });
+
+    factory LearningResponse.fromJson(Map<String, dynamic> json) => _$LearningResponseFromJson(json);
+    Map<String, dynamic> toJson() => _$LearningResponseToJson(this);
+}
+
+@JsonSerializable()
 class LearningActivity {
     final int id;
     final String title;
@@ -47,11 +63,11 @@ abstract class LearningApiService {
     factory LearningApiService(Dio dio, {String baseUrl}) = _LearningApiService;
 
     @GET('/api/learning/activities')
-    Future<List<LearningActivity>> getActivities();
+    Future<HttpResponse<LearningResponse>> getActivities();
 
     @GET('/api/learning/progress')
-    Future<LearningProgress> getProgress();
+    Future<HttpResponse<LearningResponse>> getProgress();
 
     @POST('/api/learning/submit')
-    Future<void> submitActivity(@Body() Map<String, dynamic> data);
+    Future<HttpResponse<LearningResponse>> submitActivity(@Body() Map<String, dynamic> data);
 }
