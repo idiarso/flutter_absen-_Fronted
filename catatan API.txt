@@ -1,0 +1,627 @@
+# Dokumentasi API Aplikasi
+
+## Autentikasi
+
+Semua endpoint yang memerlukan autentikasi harus menyertakan token Bearer di header:
+```
+Authorization: Bearer {token}
+```
+
+### 1. Login
+```
+POST /api/login
+
+Deskripsi:
+Endpoint ini digunakan untuk melakukan login ke aplikasi.
+
+Metode HTTP:
+- **POST**
+
+Parameter:
+- **email** (string, wajib): Alamat email pengguna.
+- **password** (string, wajib): Kata sandi pengguna.
+
+Contoh Permintaan:
+```http
+POST /api/login HTTP/1.1
+Host: example.com
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "password"
+}
+```
+
+Contoh Respons:
+```json
+{
+  "success": true,
+  "data": {
+    "token": "string",
+    "user": {
+      "id": integer,
+      "name": "string",
+      "email": "string",
+      "role": "string"
+    }
+  }
+}
+```
+
+Status Kode:
+- **200 OK**: Permintaan berhasil.
+- **401 Unauthorized**: Email atau password salah.
+
+Error Handling:
+Jika email atau password salah, respons akan mengembalikan:
+```json
+{
+  "error": "Email atau password salah."
+}
+```
+
+### 2. Get User Info
+```
+GET /api/user
+Authorization: Bearer {token}
+
+Deskripsi:
+Endpoint ini digunakan untuk mengambil informasi pengguna.
+
+Metode HTTP:
+- **GET**
+
+Parameter:
+- **token** (string, wajib): Token autentikasi pengguna.
+
+Contoh Permintaan:
+```http
+GET /api/user HTTP/1.1
+Host: example.com
+Authorization: Bearer {token}
+```
+
+Contoh Respons:
+```json
+{
+  "id": integer,
+  "name": "string",
+  "email": "string",
+  "role": "string"
+}
+```
+
+Status Kode:
+- **200 OK**: Permintaan berhasil.
+- **401 Unauthorized**: Token autentikasi tidak valid.
+
+Error Handling:
+Jika token autentikasi tidak valid, respons akan mengembalikan:
+```json
+{
+  "error": "Token autentikasi tidak valid."
+}
+```
+
+## Profil
+
+### 1. Cek Izin Update Profil
+```
+GET /profile/check-update-permission
+
+Deskripsi:
+Endpoint ini digunakan untuk memeriksa apakah pengguna memiliki izin untuk mengupdate profil.
+
+Metode HTTP:
+- **GET**
+
+Parameter:
+- **token** (string, wajib): Token autentikasi pengguna.
+
+Contoh Permintaan:
+```http
+GET /profile/check-update-permission HTTP/1.1
+Host: example.com
+Authorization: Bearer {token}
+```
+
+Contoh Respons:
+```json
+{
+  "success": true,
+  "data": {
+    "can_update_profile": boolean
+  }
+}
+```
+
+Status Kode:
+- **200 OK**: Permintaan berhasil.
+- **401 Unauthorized**: Token autentikasi tidak valid.
+
+Error Handling:
+Jika token autentikasi tidak valid, respons akan mengembalikan:
+```json
+{
+  "error": "Token autentikasi tidak valid."
+}
+```
+
+### 2. Update Profil dan Foto
+```
+POST /api/profile/update
+Content-Type: multipart/form-data
+Authorization: Bearer {token}
+
+Deskripsi:
+Endpoint ini digunakan untuk mengupdate profil dan foto pengguna.
+
+Metode HTTP:
+- **POST**
+
+Parameter:
+- **name** (string, wajib): Nama pengguna.
+- **email** (string, wajib): Alamat email pengguna.
+- **phone** (string|null): Nomor telepon pengguna.
+- **password** (string|null): Kata sandi pengguna.
+- **photo** (file|nullable|image|max:2048): Foto pengguna.
+
+Contoh Permintaan:
+```http
+POST /api/profile/update HTTP/1.1
+Host: example.com
+Content-Type: multipart/form-data
+Authorization: Bearer {token}
+
+{
+  "name": "string",
+  "email": "string",
+  "phone": "string|null",
+  "password": "string|null",
+  "photo": "file|nullable|image|max:2048"
+}
+```
+
+Contoh Respons:
+```json
+{
+  "success": true,
+  "message": "Profil berhasil diperbarui",
+  "data": {
+    "user": {
+      "id": integer,
+      "name": "string",
+      "email": "string",
+      "phone": "string|null",
+      "photo": "string|null"
+    }
+  }
+}
+```
+
+Status Kode:
+- **200 OK**: Permintaan berhasil.
+- **401 Unauthorized**: Token autentikasi tidak valid.
+
+Error Handling:
+Jika token autentikasi tidak valid, respons akan mengembalikan:
+```json
+{
+  "error": "Token autentikasi tidak valid."
+}
+```
+
+## Absensi
+
+### 1. Get Absensi Hari Ini
+```
+GET /api/get-attendance-today
+Authorization: Bearer {token}
+
+Deskripsi:
+Endpoint ini digunakan untuk mengambil absensi hari ini.
+
+Metode HTTP:
+- **GET**
+
+Parameter:
+- **token** (string, wajib): Token autentikasi pengguna.
+
+Contoh Permintaan:
+```http
+GET /api/get-attendance-today HTTP/1.1
+Host: example.com
+Authorization: Bearer {token}
+```
+
+Contoh Respons:
+```json
+{
+  "success": true,
+  "data": {
+    "attendance": {
+      "id": integer,
+      "user_id": integer,
+      "date": "string (Y-m-d)",
+      "check_in": "string (H:i:s)",
+      "check_out": "string (H:i:s)",
+      "status": "string"
+    }
+  }
+}
+```
+
+Status Kode:
+- **200 OK**: Permintaan berhasil.
+- **401 Unauthorized**: Token autentikasi tidak valid.
+
+Error Handling:
+Jika token autentikasi tidak valid, respons akan mengembalikan:
+```json
+{
+  "error": "Token autentikasi tidak valid."
+}
+```
+
+### 2. Get Jadwal
+```
+GET /api/get-schedule
+Authorization: Bearer {token}
+
+Deskripsi:
+Endpoint ini digunakan untuk mengambil jadwal.
+
+Metode HTTP:
+- **GET**
+
+Parameter:
+- **token** (string, wajib): Token autentikasi pengguna.
+
+Contoh Permintaan:
+```http
+GET /api/get-schedule HTTP/1.1
+Host: example.com
+Authorization: Bearer {token}
+```
+
+Contoh Respons:
+```json
+{
+  "success": true,
+  "data": {
+    "schedules": [
+      {
+        "id": integer,
+        "day": "string",
+        "start_time": "string (H:i:s)",
+        "end_time": "string (H:i:s)"
+      }
+    ]
+  }
+}
+```
+
+Status Kode:
+- **200 OK**: Permintaan berhasil.
+- **401 Unauthorized**: Token autentikasi tidak valid.
+
+Error Handling:
+Jika token autentikasi tidak valid, respons akan mengembalikan:
+```json
+{
+  "error": "Token autentikasi tidak valid."
+}
+```
+
+### 3. Simpan Absensi
+```
+POST /api/store-attendance
+Authorization: Bearer {token}
+
+Deskripsi:
+Endpoint ini digunakan untuk menyimpan absensi.
+
+Metode HTTP:
+- **POST**
+
+Parameter:
+- **type** (string, wajib): Jenis absensi (check_in/check_out).
+- **photo** (base64_string, wajib): Foto absensi.
+- **latitude** (string, wajib): Latitude lokasi absensi.
+- **longitude** (string, wajib): Longitude lokasi absensi.
+
+Contoh Permintaan:
+```http
+POST /api/store-attendance HTTP/1.1
+Host: example.com
+Authorization: Bearer {token}
+
+{
+  "type": "string",
+  "photo": "base64_string",
+  "latitude": "string",
+  "longitude": "string"
+}
+```
+
+Contoh Respons:
+```json
+{
+  "success": true,
+  "message": "string",
+  "data": {
+    "attendance": {
+      "id": integer,
+      "user_id": integer,
+      "date": "string (Y-m-d)",
+      "check_in": "string (H:i:s)",
+      "check_out": "string (H:i:s)",
+      "status": "string"
+    }
+  }
+}
+```
+
+Status Kode:
+- **200 OK**: Permintaan berhasil.
+- **401 Unauthorized**: Token autentikasi tidak valid.
+
+Error Handling:
+Jika token autentikasi tidak valid, respons akan mengembalikan:
+```json
+{
+  "error": "Token autentikasi tidak valid."
+}
+```
+
+## Cuti
+
+### 1. Get Daftar Cuti
+```
+GET /api/leaves
+Authorization: Bearer {token}
+
+Deskripsi:
+Endpoint ini digunakan untuk mengambil daftar cuti.
+
+Metode HTTP:
+- **GET**
+
+Parameter:
+- **token** (string, wajib): Token autentikasi pengguna.
+
+Contoh Permintaan:
+```http
+GET /api/leaves HTTP/1.1
+Host: example.com
+Authorization: Bearer {token}
+```
+
+Contoh Respons:
+```json
+{
+  "success": true,
+  "data": {
+    "leaves": [
+      {
+        "id": integer,
+        "user_id": integer,
+        "start_date": "string (Y-m-d)",
+        "end_date": "string (Y-m-d)",
+        "reason": "string",
+        "status": "string",
+        "created_at": "string (Y-m-d H:i:s)"
+      }
+    ]
+  }
+}
+```
+
+Status Kode:
+- **200 OK**: Permintaan berhasil.
+- **401 Unauthorized**: Token autentikasi tidak valid.
+
+Error Handling:
+Jika token autentikasi tidak valid, respons akan mengembalikan:
+```json
+{
+  "error": "Token autentikasi tidak valid."
+}
+```
+
+### 2. Buat Cuti Baru
+```
+POST /api/leaves
+Authorization: Bearer {token}
+
+Deskripsi:
+Endpoint ini digunakan untuk membuat cuti baru.
+
+Metode HTTP:
+- **POST**
+
+Parameter:
+- **start_date** (string, wajib): Tanggal mulai cuti.
+- **end_date** (string, wajib): Tanggal akhir cuti.
+- **reason** (string, wajib): Alasan cuti.
+
+Contoh Permintaan:
+```http
+POST /api/leaves HTTP/1.1
+Host: example.com
+Authorization: Bearer {token}
+
+{
+  "start_date": "string (Y-m-d)",
+  "end_date": "string (Y-m-d)",
+  "reason": "string"
+}
+```
+
+Contoh Respons:
+```json
+{
+  "success": true,
+  "message": "string",
+  "data": {
+    "leave": {
+      "id": integer,
+      "user_id": integer,
+      "start_date": "string (Y-m-d)",
+      "end_date": "string (Y-m-d)",
+      "reason": "string",
+      "status": "string",
+      "created_at": "string (Y-m-d H:i:s)"
+    }
+  }
+}
+```
+
+Status Kode:
+- **200 OK**: Permintaan berhasil.
+- **401 Unauthorized**: Token autentikasi tidak valid.
+
+Error Handling:
+Jika token autentikasi tidak valid, respons akan mengembalikan:
+```json
+{
+  "error": "Token autentikasi tidak valid."
+}
+```
+
+## Upload
+
+### 1. Upload Photo
+```
+POST /test-upload
+Content-Type: multipart/form-data
+
+Deskripsi:
+Endpoint ini digunakan untuk mengupload foto.
+
+Metode HTTP:
+- **POST**
+
+Parameter:
+- **photo** (file, wajib): Foto yang ingin diupload.
+
+Contoh Permintaan:
+```http
+POST /test-upload HTTP/1.1
+Host: example.com
+Content-Type: multipart/form-data
+
+{
+  "photo": "file"
+}
+```
+
+Contoh Respons:
+```json
+{
+  "success": true,
+  "message": "File uploaded successfully. Path: {path}"
+}
+```
+
+Status Kode:
+- **200 OK**: Permintaan berhasil.
+
+## API Learning (Pembelajaran)
+- `GET /api/learning/activities` - Mengambil daftar aktivitas pembelajaran
+- `GET /api/learning/progress` - Mengambil progress pembelajaran siswa
+- `POST /api/learning/submit` - Mengirim hasil aktivitas pembelajaran
+
+## API Dashboard
+- `GET /api/dashboard/summary` - Mengambil ringkasan dashboard
+- `GET /api/dashboard/recent-activities` - Mengambil aktivitas terbaru
+- `GET /api/dashboard/statistics` - Mengambil statistik dashboard
+
+## API PKL (Praktik Kerja Lapangan)
+- `GET /api/pkl/locations` - Mendapatkan daftar lokasi PKL
+- `GET /api/pkl/student` - Mendapatkan data PKL siswa
+- `POST /api/pkl/daily-report` - Mengirim laporan harian PKL
+- `GET /api/pkl/progress` - Melihat progress PKL
+
+## API PRAY (Jadwal Ibadah)
+- `GET /api/pray/schedule` - Mendapatkan jadwal ibadah hari ini
+- `GET /api/pray/attendance` - Melihat kehadiran ibadah pengguna
+- `POST /api/pray/mark-attendance` - Menandai kehadiran ibadah
+- `GET /api/pray/statistics` - Melihat statistik kehadiran ibadah
+
+## API Akademik
+- `GET /api/academic/classes` - Daftar kelas
+- `GET /api/academic/student-class` - Info kelas siswa
+- `GET /api/academic/majors` - Daftar jurusan
+- `GET /api/academic/subjects` - Daftar mata pelajaran
+- `GET /api/academic/schedule` - Jadwal pelajaran
+- `GET /api/academic/grades` - Nilai siswa
+
+## API Ekstrakurikuler
+- `GET /api/extracurricular/activities` - Daftar ekstrakurikuler
+- `GET /api/extracurricular/student` - Ekstrakurikuler siswa
+- `POST /api/extracurricular/register` - Daftar ekstrakurikuler
+- `GET /api/extracurricular/schedule` - Jadwal ekstrakurikuler
+
+## API Bimbingan Konseling
+- `GET /api/counseling/history` - Riwayat konseling
+- `POST /api/counseling/request` - Permintaan konseling
+- `GET /api/counseling/home-visits` - Data kunjungan rumah
+- `GET /api/counseling/issues` - Tracking masalah siswa
+
+## API Piket & Perizinan (Duty)
+- `GET /api/duty/schedule` - Mendapatkan jadwal piket guru
+- `POST /api/duty/report` - Mengirim laporan piket
+- `GET /api/duty/reports` - Melihat daftar laporan piket
+
+## API Attendance Management
+### QR Code
+- `POST /api/attendance/qr-code` - Generate QR Code untuk presensi
+
+### Class Attendance
+- `GET /api/attendance/class` - Melihat kehadiran kelas
+
+### Dhuha Prayer
+- `GET /api/attendance/dhuha` - Melihat kehadiran shalat dhuha
+- `POST /api/attendance/dhuha` - Menandai kehadiran shalat dhuha
+
+### Location Map
+- `GET /api/attendance/locations` - Mendapatkan daftar lokasi yang diizinkan untuk presensi
+
+### Schedules
+- `GET /api/attendance/schedules` - Mendapatkan jadwal presensi
+
+### Leaves (Izin)
+- `POST /api/attendance/leave` - Mengajukan permintaan izin
+- `GET /api/attendance/leaves` - Melihat daftar izin
+
+Catatan: Semua endpoint API di atas memerlukan autentikasi menggunakan Laravel Sanctum. Request harus menyertakan token yang valid di header Authorization.
+
+Catatan: Semua response error akan mengikuti format:
+```
+{
+  "success": false,
+  "message": "string",
+  "errors": {
+    "field": [
+      "error message"
+    ]
+  }
+}
+```
+
+2. Untuk endpoint yang memerlukan autentikasi, jika token tidak valid atau expired, akan mengembalikan response dengan status code 401:
+```
+{
+  "success": false,
+  "message": "Unauthenticated"
+}
+```
+
+3. Untuk upload file:
+   - Maksimum ukuran file: 5MB
+   - Format yang didukung: jpeg, jpg, png
+   - File akan disimpan di storage/app/public/user-photos
+
+static const String baseUrl = 'https://app.sijasmkn1punggelan.org';
