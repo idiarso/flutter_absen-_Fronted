@@ -7,6 +7,7 @@ abstract class LearningRepository {
     Future<DataState<List<LearningActivity>>> getActivities();
     Future<DataState<LearningProgress>> getProgress();
     Future<DataState<void>> submitActivity(LearningActivity activity);
+    Future<DataState<LearningResponse>> login();
 }
 
 class LearningRepositoryImpl implements LearningRepository {
@@ -59,6 +60,21 @@ class LearningRepositoryImpl implements LearningRepository {
             }
         } on DioException catch (e) {
             return DataFailed(e.message ?? 'Unknown error occurred');
+        }
+    }
+
+    @override
+    Future<DataState<LearningResponse>> login() async {
+        try {
+            // Provide empty credentials map as required by the API method
+            final credentials = <String, dynamic>{'email': '', 'password': ''};
+            final response = await _apiService.login(credentials);
+            if (response.response.statusCode == 200) {
+                return DataSuccess(response.data);
+            }
+            return DataFailed("Login failed: ${response.response.statusMessage}");
+        } catch (e) {
+            return DataFailed(e.toString());
         }
     }
 }

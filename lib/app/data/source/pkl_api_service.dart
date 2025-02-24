@@ -69,6 +69,21 @@ class PKLProgress {
 
     factory PKLProgress.fromJson(Map<String, dynamic> json) => _$PKLProgressFromJson(json);
     Map<String, dynamic> toJson() => _$PKLProgressToJson(this);
+
+    // Getter for approved count
+    int get approvedCount {
+        return attendanceByMonth['approved'] ?? 0;
+    }
+
+    // Getter for pending count
+    int get pendingCount {
+        return attendanceByMonth['pending'] ?? 0;
+    }
+
+    // Getter for rejected count
+    int get rejectedCount {
+        return attendanceByMonth['rejected'] ?? 0;
+    }
 }
 
 @RestApi()

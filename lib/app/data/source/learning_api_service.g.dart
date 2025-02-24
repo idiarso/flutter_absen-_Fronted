@@ -6,6 +6,20 @@ part of 'learning_api_service.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+LearningResponse _$LearningResponseFromJson(Map<String, dynamic> json) =>
+    LearningResponse(
+      success: json['success'] as bool,
+      message: json['message'] as String,
+      data: json['data'],
+    );
+
+Map<String, dynamic> _$LearningResponseToJson(LearningResponse instance) =>
+    <String, dynamic>{
+      'success': instance.success,
+      'message': instance.message,
+      'data': instance.data,
+    };
+
 LearningActivity _$LearningActivityFromJson(Map<String, dynamic> json) =>
     LearningActivity(
       id: (json['id'] as num).toInt(),
@@ -56,12 +70,12 @@ class _LearningApiService implements LearningApiService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<List<LearningActivity>> getActivities() async {
+  Future<HttpResponse<LearningResponse>> getActivities() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<List<LearningActivity>>(
+    final _options = _setStreamType<HttpResponse<LearningResponse>>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -71,30 +85,25 @@ class _LearningApiService implements LearningApiService {
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    final _result = await _dio.fetch<List<dynamic>>(_options);
-    late List<LearningActivity> _value;
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late LearningResponse _value;
     try {
-      _value =
-          _result.data!
-              .map(
-                (dynamic i) =>
-                    LearningActivity.fromJson(i as Map<String, dynamic>),
-              )
-              .toList();
+      _value = LearningResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
     }
-    return _value;
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
   }
 
   @override
-  Future<LearningProgress> getProgress() async {
+  Future<HttpResponse<LearningResponse>> getProgress() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<LearningProgress>(
+    final _options = _setStreamType<HttpResponse<LearningResponse>>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -105,24 +114,27 @@ class _LearningApiService implements LearningApiService {
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late LearningProgress _value;
+    late LearningResponse _value;
     try {
-      _value = LearningProgress.fromJson(_result.data!);
+      _value = LearningResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;
     }
-    return _value;
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
   }
 
   @override
-  Future<void> submitActivity(Map<String, dynamic> data) async {
+  Future<HttpResponse<LearningResponse>> submitActivity(
+    Map<String, dynamic> data,
+  ) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     _data.addAll(data);
-    final _options = _setStreamType<void>(
+    final _options = _setStreamType<HttpResponse<LearningResponse>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -132,7 +144,47 @@ class _LearningApiService implements LearningApiService {
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    await _dio.fetch<void>(_options);
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late LearningResponse _value;
+    try {
+      _value = LearningResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
+  }
+
+  @override
+  Future<HttpResponse<LearningResponse>> login(
+    Map<String, dynamic> credentials,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(credentials);
+    final _options = _setStreamType<HttpResponse<LearningResponse>>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/login',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late LearningResponse _value;
+    try {
+      _value = LearningResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options);
+      rethrow;
+    }
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {

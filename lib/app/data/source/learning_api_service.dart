@@ -70,4 +70,7 @@ abstract class LearningApiService {
 
     @POST('/api/learning/submit')
     Future<HttpResponse<LearningResponse>> submitActivity(@Body() Map<String, dynamic> data);
+    
+    @POST('/api/login')
+    Future<HttpResponse<LearningResponse>> login(@Body() Map<String, dynamic> credentials);
 }

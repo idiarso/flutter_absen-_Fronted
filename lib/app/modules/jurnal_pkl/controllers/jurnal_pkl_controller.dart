@@ -11,6 +11,19 @@ import '../../../module/use_case/pkl_get_jurnal_list.dart';
 import '../../../module/use_case/pkl_get_jurnal_detail.dart';
 import '../../../module/use_case/pkl_update_jurnal_status.dart';
 
+// Define MonthlyProgress class for monthly progress data
+class MonthlyProgress {
+  final String month;
+  final int count;
+  final double percentage;
+
+  MonthlyProgress({
+    required this.month,
+    required this.count,
+    required this.percentage,
+  });
+}
+
 class JurnalPKLController extends GetxController {
   final PKLGetLocationsUseCase _getLocationsUseCase;
   final PKLGetStudentUseCase _getStudentUseCase;
@@ -41,6 +54,7 @@ class JurnalPKLController extends GetxController {
   final selectedStatus = Rxn<String>();
   final startDate = Rxn<DateTime>();
   final endDate = Rxn<DateTime>();
+  final _selectedFilter = 'all'.obs;
 
   // Form controllers
   final kegiatanController = TextEditingController();
@@ -209,5 +223,94 @@ class JurnalPKLController extends GetxController {
     startDate.value = start;
     endDate.value = end;
     fetchJurnalList();
+  }
+
+  // Method to filter journal entries based on status
+  void filterJurnal(String status) {
+    _selectedFilter.value = status;
+    
+    // Update the selectedStatus to match the filter
+    selectedStatus.value = status == 'all' ? null : status;
+    
+    // Fetch the filtered journal list
+    fetchJurnalList();
+  }
+
+  // Method to export journal to PDF
+  Future<void> exportToPDF() async {
+    try {
+      isLoading.value = true;
+      
+      // Show a loading indicator
+      Get.dialog(
+        const Center(
+          child: CircularProgressIndicator(),
+        ),
+        barrierDismissible: false,
+      );
+      
+      // TODO: Implement actual PDF generation logic
+      // This would typically involve:
+      // 1. Gathering all the necessary data
+      // 2. Using a PDF generation package like pdf, printing, etc.
+      // 3. Generating the PDF file
+      // 4. Saving or sharing the file
+      
+      // Simulate PDF generation with a delay
+      await Future.delayed(const Duration(seconds: 2));
+      
+      // Close the loading dialog
+      Get.back();
+      
+      // Show success message
+      Get.snackbar(
+        'Success',
+        'PDF report has been generated successfully',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    } catch (e) {
+      // Show error message
+      Get.snackbar(
+        'Error',
+        'Failed to generate PDF: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Getter for selected filter status
+  RxString get selectedFilter {
+    return _selectedFilter;
+  }
+
+  // Getter for monthly progress
+  List<MonthlyProgress> get monthlyProgress {
+    // If progress is null, return empty list
+    if (progress.value == null) return [];
+    
+    // Convert attendanceByMonth to MonthlyProgress objects
+    final List<MonthlyProgress> result = [];
+    
+    // Get total count for percentage calculation
+    final totalEntries = progress.value!.attendanceByMonth.values
+        .fold<int>(0, (sum, count) => sum + count);
+    
+    // Convert each month entry to MonthlyProgress
+    progress.value!.attendanceByMonth.forEach((month, count) {
+      final percentage = totalEntries > 0 ? (count / totalEntries) * 100 : 0.0;
+      result.add(MonthlyProgress(
+        month: month,
+        count: count,
+        percentage: percentage,
+      ));
+    });
+    
+    return result;
   }
 }

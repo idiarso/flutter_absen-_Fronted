@@ -7,7 +7,10 @@ class DashboardProvider {
 
   Future<Map<String, dynamic>> getSummary() async {
     try {
-      return await _apiService.getSummary();
+      final summary = await _apiService.getSummary();
+      return summary is Map<String, dynamic> 
+          ? summary as Map<String, dynamic>
+          : {'data': summary};
     } catch (e) {
       throw 'Gagal mendapatkan ringkasan dashboard: ${e.toString()}';
     }
@@ -15,7 +18,12 @@ class DashboardProvider {
 
   Future<List<Map<String, dynamic>>> getRecentActivities() async {
     try {
-      return await _apiService.getRecentActivities();
+      final activities = await _apiService.getRecentActivities();
+      return activities.map<Map<String, dynamic>>((activity) => 
+          activity is Map<String, dynamic> 
+              ? activity as Map<String, dynamic>
+              : {'data': activity}
+      ).toList();
     } catch (e) {
       throw 'Gagal mendapatkan aktivitas terbaru: ${e.toString()}';
     }
@@ -23,7 +31,10 @@ class DashboardProvider {
 
   Future<Map<String, dynamic>> getStatistics() async {
     try {
-      return await _apiService.getStatistics();
+      final stats = await _apiService.getStatistics();
+      return stats is Map<String, dynamic> 
+          ? stats as Map<String, dynamic>
+          : {'data': stats};
     } catch (e) {
       throw 'Gagal mendapatkan statistik dashboard: ${e.toString()}';
     }

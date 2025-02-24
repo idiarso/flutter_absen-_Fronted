@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:skansapung_presensi/app/data/source/photo_api_service.dart';
 import 'package:skansapung_presensi/app/module/repository/photo_repository.dart';
 import 'package:skansapung_presensi/core/constant/constant.dart';
-import 'package:skansapung_presensi/core/network/data_state.dart';
+import 'package:skansapung_presensi/app/core/data/data_state.dart';
+import 'package:dio/dio.dart';
 
 class PhotoRepositoryImpl extends PhotoRepository {
   final PhotoApiService _photoApiService;
@@ -11,23 +12,26 @@ class PhotoRepositoryImpl extends PhotoRepository {
   PhotoRepositoryImpl(this._photoApiService);
 
   @override
-  Future<DataState<String>> get() {
-    return handleResponse(
-      () => _photoApiService.get(),
-      (p0) => p0,
-    );
+  Future<DataState<String>> get() async {
+    try {
+      final response = await _photoApiService.get();
+      return DataSuccess(response);
+    } on DioException catch (e) {
+      return DataFailed(e.message ?? 'Failed to load photo', e.response?.statusCode ?? 500);
+    } catch (e) {
+      return DataFailed(e.toString(), 500);
+    }
   }
 
   @override
   Future<DataState> getBytes(String url) async {
-    final response =
-        await _photoApiService.getBytes(path: url.replaceAll(BASE_URL, ''));
-    if (response.response.statusCode == HttpStatus.ok) {
-      return SuccessState(data: response.response.data);
-    } else {
-      return ErrorState(
-          message:
-              '${response.response.statusCode} : ${response.response.statusMessage}');
+    try {
+      final response = await _photoApiService.getBytes(url.replaceAll(BASE_URL, ''));
+      return DataSuccess(response);
+    } on DioException catch (e) {
+      return DataFailed(e.message ?? 'Failed to get bytes', e.response?.statusCode ?? 500);
+    } catch (e) {
+      return DataFailed(e.toString(), 500);
     }
   }
 }

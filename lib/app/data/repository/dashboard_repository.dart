@@ -1,19 +1,19 @@
-import 'package:skansapung_presensi/app/data/models/dashboard_model.dart';
-import 'package:skansapung_presensi/app/data/source/dashboard_api_service.dart';
+import 'package:skansapung_presensi/app/data/models/dashboard_model.dart' as dashboardModel;
+import 'package:skansapung_presensi/app/data/source/dashboard_api_service.dart' as dashboardService;
 import 'package:skansapung_presensi/app/module/repository/dashboard_repository.dart';
 import 'package:skansapung_presensi/core/network/data_state.dart';
 
 class DashboardRepositoryImpl extends DashboardRepository {
-  final DashboardApiService _dashboardApiService;
+  final dashboardService.DashboardApiService _dashboardApiService;
 
   DashboardRepositoryImpl(this._dashboardApiService);
 
   @override
-  Future<DataState<DashboardSummary>> getSummary() async {
+  Future<DataState<dashboardModel.DashboardSummary>> getSummary() async {
     try {
       final response = await _dashboardApiService.getSummary();
       if (response.response.statusCode == 200 && response.data.success) {
-        return DataSuccess(DashboardSummary.fromJson(response.data.data));
+        return DataSuccess(dashboardModel.DashboardSummary.fromJson(response.data.data));
       }
       return DataFailed(
         response.response.statusMessage ?? 'Unknown error occurred',
