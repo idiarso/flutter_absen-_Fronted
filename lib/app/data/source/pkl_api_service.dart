@@ -9,13 +9,20 @@ abstract class PKLApiService {
   factory PKLApiService(Dio dio, {String baseUrl}) = _PKLApiService;
 
   @GET('/api/pkl/jurnal')
-  Future<List<JurnalPKL>> getJurnalList();
+  Future<List<JurnalPKL>> getJurnalList({
+    @Query('search') String? search,
+    @Query('status') String? status,
+    @Query('start_date') String? startDate,
+    @Query('end_date') String? endDate,
+  });
 
   @POST('/api/pkl/jurnal')
+  @MultiPart()
   Future<void> submitJurnal({
-    @Field('kegiatan') required String kegiatan,
-    @Field('lokasi') required String lokasi,
-    @Field('image_path') required String imagePath,
+    @Part(name: 'kegiatan') required String kegiatan,
+    @Part(name: 'lokasi') required String lokasi,
+    @Part(name: 'dokumentasi') required List<int> dokumentasi,
+    @Part(name: 'filename') required String filename,
   });
 
   @GET('/api/pkl/locations')
@@ -26,4 +33,14 @@ abstract class PKLApiService {
 
   @GET('/api/pkl/progress')
   Future<Map<String, dynamic>> getProgress();
+
+  @GET('/api/pkl/jurnal/{id}')
+  Future<JurnalPKL> getJurnalDetail(@Path('id') int id);
+
+  @PUT('/api/pkl/jurnal/{id}/status')
+  Future<void> updateJurnalStatus(
+    @Path('id') int id,
+    @Field('status') String status,
+    @Field('catatan') String? catatan,
+  );
 }
