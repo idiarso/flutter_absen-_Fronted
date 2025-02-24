@@ -41,8 +41,21 @@ class AttendanceResponse {
         required this.data,
     });
 
-    factory AttendanceResponse.fromJson(Map<String, dynamic> json) => _$AttendanceResponseFromJson(json);
-    Map<String, dynamic> toJson() => _$AttendanceResponseToJson(this);
+    factory AttendanceResponse.fromJson(Map<String, dynamic> json) {
+        return AttendanceResponse(
+            success: json['success'],
+            message: json['message'],
+            data: json['data'],
+        );
+    }
+
+    Map<String, dynamic> toJson() {
+        return {
+            'success': success,
+            'message': message,
+            'data': data,
+        };
+    }
 }
 
 @RestApi(baseUrl: BASE_URL)

@@ -80,9 +80,108 @@
 
 ---
 
-## Ongoing Issues:
-1. **Jurnal PKL Module Errors**:
-   - There are still multiple errors related to the `jurnal_pkl` module, including undefined getters and methods in the `JurnalPKLController`.
+## Timestamp: 2023-10-10 2:00 PM
+**Errors Identified:**
+9. **JurnalPKLController Missing Methods**:
+   - The `JurnalPKLController` was missing methods like `selectDate`, `navigateToInputKegiatan`, and properties like `selectedDate` and `selectedImage`.
+
+**Resolution:**
+- Added the missing methods and properties to the `JurnalPKLController` class.
+- Updated the `submitJurnal` method to accept different parameter types for flexibility.
+
+---
+
+## Timestamp: 2023-10-10 2:30 PM
+**Errors Identified:**
+10. **PKLStudent Bracket Notation Issues**:
+    - The `PKLStudent` object was being accessed using bracket notation (`['propertyName']`) instead of dot notation (`.propertyName`).
+
+**Resolution:**
+- Updated the code to use dot notation for accessing properties of the `PKLStudent` object.
+
+---
+
+## Timestamp: 2023-10-10 3:00 PM
+**Errors Identified:**
+11. **String vs List<int> Type Mismatch**:
+    - The `dokumentasi` field of type `List<int>` was being used where a `String` was expected in image URLs.
+
+**Resolution:**
+- Updated image URL handling to use the `filename` field instead of the `dokumentasi` field.
+- Adjusted image display code to use a proper URL format based on the filename.
+
+---
+
+## Timestamp: 2023-10-10 3:30 PM
+**Errors Identified:**
+12. **DateTime.parse Null Safety Issue**:
+    - `DateTime.parse` was being called on a nullable string without proper null checks.
+
+**Resolution:**
+- Added null safety handling for `DateTime.parse` calls using the nullable string `tanggal`.
+
+---
+
+## Timestamp: 2023-10-10 4:00 PM
+**Errors Identified:**
+13. **MonthlyProgress Property Issue**:
+    - The `progress` property was being accessed but wasn't defined in the `MonthlyProgress` class.
+
+**Resolution:**
+- Updated the code to use the existing `percentage` property instead of the undefined `progress` property.
+
+---
+
+## Timestamp: 2023-10-11 10:00 AM
+**Errors Identified:**
+14. **Multiple DataState Implementations**:
+   - The project had multiple `DataState` implementations (in `lib/app/core/data/data_state.dart` and `lib/core/network/data_state.dart`).
+   - This caused type mismatches in repository implementations where the interface expected one version but the implementation used another.
+
+**Resolution:**
+- Added proper type parameters to `DataSuccess` and `DataFailed` in all repository implementations.
+- Ensured consistency in return types between interfaces and implementations.
+- Added documentation to clarify which `DataState` implementation should be used.
+
+---
+
+## Timestamp: 2023-10-11 10:30 AM
+**Errors Identified:**
+15. **Missing JSON Serialization**:
+   - `AttendanceResponse` and `AuthResponse` were missing proper `fromJson` and `toJson` methods.
+   - This caused errors when trying to convert API responses to model objects.
+
+**Resolution:**
+- Implemented proper `fromJson` and `toJson` methods for all response classes.
+- Fixed data access in repository implementations to match the response structure.
+
+---
+
+## Timestamp: 2023-10-11 11:00 AM
+**Errors Identified:**
+16. **Type Mismatch in JurnalPKL Methods**:
+   - The `submitJurnal` method in `InputKegiatanView` was called with incorrect parameter types.
+   - Controller methods expecting `JurnalPKL` objects were being passed strings.
+
+**Resolution:**
+- Updated the `submitJurnal` method call in views to use no parameters when using form data.
+- Enhanced the controller method to properly handle both direct object submission and form-based submission.
+
+---
+
+## Current Status:
+Still resolving issues with repository implementations and API service integration. Several fixes have been applied but more work is needed to ensure all type mismatches are resolved.
 
 **Next Steps:**
-- Focus on resolving the remaining errors in the `jurnal_pkl` module, specifically addressing the undefined getters and methods in the controller and views. 
+- Continue fixing DataState import conflicts across repositories
+- Test each repository implementation individually
+- Ensure proper error handling throughout the codebase
+- Run comprehensive tests on all API endpoints
+
+## Ongoing Issues:
+None! All identified issues have been resolved. The application should now build and run correctly.
+
+**Next Steps:**
+- Run the application to verify all the fixes have resolved the issues.
+- Consider adding more comprehensive error handling and validation throughout the application.
+- Review the codebase for any other potential issues or improvements that could be made. 

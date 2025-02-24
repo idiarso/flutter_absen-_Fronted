@@ -21,8 +21,23 @@ class AuthResponse {
         this.user,
     });
 
-    factory AuthResponse.fromJson(Map<String, dynamic> json) => _$AuthResponseFromJson(json);
-    Map<String, dynamic> toJson() => _$AuthResponseToJson(this);
+    factory AuthResponse.fromJson(Map<String, dynamic> json) {
+      return AuthResponse(
+        success: json['success'],
+        message: json['message'],
+        token: json['token'],
+        user: json['user'],
+      );
+    }
+
+    Map<String, dynamic> toJson() {
+      return {
+        'success': success,
+        'message': message,
+        'token': token,
+        'user': user,
+      };
+    }
 }
 
 @RestApi(baseUrl: BASE_URL)

@@ -97,7 +97,9 @@ class RiwayatKegiatanView extends GetView<JurnalPKLController> {
                                         const SizedBox(width: 8),
                                         Text(
                                           DateFormat('dd MMMM yyyy').format(
-                                            DateTime.parse(jurnal.tanggal),
+                                            jurnal.tanggal != null 
+                                              ? DateTime.parse(jurnal.tanggal!) 
+                                              : DateTime.now(),
                                           ),
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
@@ -166,12 +168,12 @@ class RiwayatKegiatanView extends GetView<JurnalPKLController> {
                                         height: 1.5,
                                       ),
                                     ),
-                                    if (jurnal.dokumentasi != null) ...[
+                                    if (jurnal.filename != null) ...[
                                       const SizedBox(height: 16),
                                       ClipRRect(
                                         borderRadius: BorderRadius.circular(8),
                                         child: Image.network(
-                                          jurnal.dokumentasi!,
+                                          "https://app.sijasmkn1punggelan.org/storage/jurnal_pkl/${jurnal.filename}",
                                           width: double.infinity,
                                           height: 200,
                                           fit: BoxFit.cover,
@@ -179,13 +181,9 @@ class RiwayatKegiatanView extends GetView<JurnalPKLController> {
                                             return Container(
                                               width: double.infinity,
                                               height: 200,
-                                              color: Colors.grey[200],
+                                              color: Colors.grey[300],
                                               child: const Center(
-                                                child: Icon(
-                                                  Icons.broken_image,
-                                                  size: 48,
-                                                  color: Colors.grey,
-                                                ),
+                                                child: Text("Gagal memuat gambar"),
                                               ),
                                             );
                                           },

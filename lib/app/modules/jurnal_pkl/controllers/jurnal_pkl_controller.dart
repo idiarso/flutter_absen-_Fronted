@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../../../data/models/jurnal_pkl_model.dart';
 import '../../../data/source/pkl_api_service.dart';
 import '../../../module/use_case/pkl_get_locations.dart';
@@ -55,6 +56,10 @@ class JurnalPKLController extends GetxController {
   final startDate = Rxn<DateTime>();
   final endDate = Rxn<DateTime>();
   final _selectedFilter = 'all'.obs;
+  
+  // Added missing variables
+  final selectedDate = Rx<String>(DateTime.now().toString().substring(0, 10));
+  final selectedImage = Rxn<XFile>();
 
   // Form controllers
   final kegiatanController = TextEditingController();
@@ -159,38 +164,68 @@ class JurnalPKLController extends GetxController {
     }
   }
 
-  Future<void> submitJurnal() async {
-    if (kegiatanController.text.isEmpty || lokasiController.text.isEmpty) {
-      Get.snackbar('Error', 'Mohon lengkapi semua field');
-      return;
-    }
+  // Updated submitJurnal method to accept optional parameters
+  Future<void> submitJurnal([JurnalPKL? jurnal, Map<String, dynamic>? data]) async {
+    if (jurnal == null && data == null) {
+      // Using form data
+      if (kegiatanController.text.isEmpty || lokasiController.text.isEmpty) {
+        Get.snackbar('Error', 'Mohon lengkapi semua field');
+        return;
+      }
 
-    if (imageBytes.value == null) {
-      Get.snackbar('Error', 'Mohon pilih dokumentasi kegiatan');
-      return;
-    }
+      if (imageBytes.value == null) {
+        Get.snackbar('Error', 'Mohon pilih dokumentasi kegiatan');
+        return;
+      }
 
-    try {
-      final jurnal = JurnalPKL(
-        kegiatan: kegiatanController.text,
-        lokasi: lokasiController.text,
-        dokumentasi: imageBytes.value!,
-        filename: imagePath.value!.split('/').last,
-      );
-      
-      await _submitDailyReportUseCase(jurnal);
-      
-      // Clear form
-      kegiatanController.clear();
-      lokasiController.clear();
-      imagePath.value = null;
-      imageBytes.value = null;
-      
-      Get.snackbar('Sukses', 'Jurnal berhasil disubmit');
-      await fetchJurnalList(); // Refresh list after submit
-    } catch (e) {
-      Get.snackbar('Error', 'Gagal mengirim jurnal');
-      rethrow;
+      try {
+        final jurnal = JurnalPKL(
+          kegiatan: kegiatanController.text,
+          lokasi: lokasiController.text,
+          dokumentasi: imageBytes.value!,
+          filename: imagePath.value!.split('/').last,
+          tanggal: selectedDate.value,
+        );
+        await _submitDailyReportUseCase(jurnal);
+        // Clear form
+        kegiatanController.clear();
+        lokasiController.clear();
+        imagePath.value = null;
+        imageBytes.value = null;
+        selectedImage.value = null;
+        Get.snackbar('Sukses', 'Jurnal berhasil disubmit');
+        await fetchJurnalList(); // Refresh list after submit
+      } catch (e) {
+        Get.snackbar('Error', 'Gagal mengirim jurnal');
+        rethrow;
+      }
+    } else if (jurnal != null) {
+      // Using provided jurnal data
+      try {
+        await _submitDailyReportUseCase(jurnal);
+        Get.snackbar('Sukses', 'Jurnal berhasil disubmit');
+        await fetchJurnalList();
+      } catch (e) {
+        Get.snackbar('Error', 'Gagal mengirim jurnal');
+        rethrow;
+      }
+    } else if (data != null) {
+      // Using provided map data
+      try {
+        final jurnal = JurnalPKL(
+          kegiatan: data['kegiatan'],
+          lokasi: data['lokasi'],
+          dokumentasi: data['dokumentasi'],
+          filename: data['filename'],
+          tanggal: data['tanggal'],
+        );
+        await _submitDailyReportUseCase(jurnal);
+        Get.snackbar('Sukses', 'Jurnal berhasil disubmit');
+        await fetchJurnalList();
+      } catch (e) {
+        Get.snackbar('Error', 'Gagal mengirim jurnal');
+        rethrow;
+      }
     }
   }
 
@@ -202,9 +237,39 @@ class JurnalPKLController extends GetxController {
       if (image != null) {
         imagePath.value = image.path;
         imageBytes.value = await image.readAsBytes();
+        selectedImage.value = image;
       }
     } catch (e) {
       Get.snackbar('Error', 'Gagal memilih gambar');
+    }
+  }
+
+  // Added missing methods
+  void selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    
+    if (picked != null) {
+      selectedDate.value = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+    }
+  }
+
+  void navigateToInputKegiatan() {
+    Get.toNamed('/jurnal-pkl/input');
+  }
+
+  Future<void> loadJurnalPKL() async {
+    isLoading.value = true;
+    try {
+      await fetchJurnalList();
+    } catch (e) {
+      Get.snackbar('Error', 'Gagal memuat daftar jurnal');
+    } finally {
+      isLoading.value = false;
     }
   }
 

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/jurnal_pkl_controller.dart';
@@ -70,7 +71,7 @@ class InputKegiatanView extends GetView<JurnalPKLController> {
               }
 
               final jurnal = {
-                'userId': controller.studentData.value?['id'] ?? 0,
+                'userId': controller.studentData.value?.id ?? 0,
                 'tanggal': DateTime.now().toIso8601String(),
                 'kegiatan': kegiatanController.text,
                 'lokasi': lokasiController.text,
@@ -100,7 +101,7 @@ class InputKegiatanView extends GetView<JurnalPKLController> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Lokasi PKL: ${controller.studentData.value?['lokasi'] ?? 'Belum ada'}',
+                              'Lokasi PKL: ${controller.studentData.value?.lokasi ?? 'Belum ada'}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -108,7 +109,7 @@ class InputKegiatanView extends GetView<JurnalPKLController> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Pembimbing: ${controller.studentData.value?['pembimbing'] ?? 'Belum ada'}',
+                              'Pembimbing: ${controller.studentData.value?.pembimbing ?? 'Belum ada'}',
                               style: const TextStyle(fontSize: 14),
                             ),
                           ],
@@ -302,10 +303,7 @@ class InputKegiatanView extends GetView<JurnalPKLController> {
                           return;
                         }
 
-                        controller.submitJurnal(
-                          kegiatanController.text,
-                          lokasiController.text,
-                        );
+                        controller.submitJurnal();
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),

@@ -32,7 +32,7 @@ class AttendanceRepositoryImpl extends AttendanceRepository {
     try {
       final response = await _attendanceApiService.getAttendanceToday();
       final attendanceModel = AttendanceModel.fromJson(response.data.toJson());
-      return DataSuccess(attendanceModel.thisMonth);
+      return DataSuccess<List<AttendanceEntity>>(attendanceModel.thisMonth);
     } on DioException catch (e) {
       return DataFailed(
         e.message ?? 'Unknown error occurred',
@@ -48,7 +48,7 @@ class AttendanceRepositoryImpl extends AttendanceRepository {
     try {
       final response = await _attendanceApiService.getAttendanceToday();
       final attendanceModel = AttendanceModel.fromJson(response.data.toJson());
-      return DataSuccess(attendanceModel.today);
+      return DataSuccess<AttendanceEntity?>(attendanceModel.today);
     } on DioException catch (e) {
       return DataFailed(
         e.message ?? 'Unknown error occurred',
@@ -63,7 +63,7 @@ class AttendanceRepositoryImpl extends AttendanceRepository {
   Future<DataState<bool>> sendAttendance(AttendanceParamEntity param) async {
     try {
       final response = await _attendanceApiService.sendAttendance(body: param.toJson());
-      return const DataSuccess(true);
+      return const DataSuccess<bool>(true);
     } on DioException catch (e) {
       return DataFailed(
         e.message ?? 'Error occurred while sending attendance',
@@ -81,14 +81,14 @@ class AttendanceRepositoryImpl extends AttendanceRepository {
       final response = await _attendanceApiService.getAttendanceByMonthYear(
           param.month.toString(), param.year.toString());
       if (response.isNotEmpty) {
-        return DataSuccess(
+        return DataSuccess<List<AttendanceEntity>>(
           List<AttendanceEntity>.from(
               response.map((item) => AttendanceEntity.fromJson(item.toJson()))),
         );
       }
-      return DataFailed('No data found', 404);
+      return DataFailed<List<AttendanceEntity>>('No data found', 404);
     } catch (e) {
-      return DataFailed(e.toString(), 500);
+      return DataFailed<List<AttendanceEntity>>(e.toString(), 500);
     }
   }
 }

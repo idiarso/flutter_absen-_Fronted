@@ -13,7 +13,7 @@ class AuthRepositoryImpl extends AuthRepository {
   AuthRepositoryImpl(this._authApiService);
 
   @override
-  Future<DataState> login(AuthEntity param) async {
+  Future<DataState<dynamic>> login(AuthEntity param) async {
     try {
       final response = await _authApiService.login(param.toJson());
       if (response.data.success) {
@@ -24,13 +24,13 @@ class AuthRepositoryImpl extends AuthRepository {
         await SharedPreferencesHelper.setString(PREF_NAME, authModel.user.name);
         await SharedPreferencesHelper.setString(
             PREF_EMAIL, authModel.user.email);
-        return const DataSuccess(null);
+        return const DataSuccess<dynamic>(null);
       }
-      return DataFailed(response.data.message, response.response.statusCode);
+      return DataFailed<dynamic>(response.data.message, response.response.statusCode);
     } on DioException catch (e) {
-      return DataFailed(e.message ?? 'Unknown error', e.response?.statusCode ?? 500);
+      return DataFailed<dynamic>(e.message ?? 'Unknown error', e.response?.statusCode ?? 500);
     } catch (e) {
-      return DataFailed(e.toString(), 500);
+      return DataFailed<dynamic>(e.toString(), 500);
     }
   }
 }

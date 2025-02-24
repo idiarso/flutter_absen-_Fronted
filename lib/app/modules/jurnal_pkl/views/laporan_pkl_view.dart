@@ -142,12 +142,12 @@ class LaporanPKLView extends GetView<JurnalPKLController> {
                                 const SizedBox(height: 8),
                                 LinearPercentIndicator(
                                   lineHeight: 8,
-                                  percent: item.progress,
+                                  percent: item.percentage,
                                   backgroundColor: Colors.brown.withOpacity(0.2),
                                   progressColor: Colors.brown,
                                   barRadius: const Radius.circular(4),
                                   trailing: Text(
-                                    '${(item.progress * 100).toInt()}%',
+                                    '${(item.percentage * 100).toInt()}%',
                                   ),
                                 ),
                               ],

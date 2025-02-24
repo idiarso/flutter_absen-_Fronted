@@ -262,9 +262,9 @@ class JurnalPKLView extends GetView<JurnalPKLController> {
                   Text(jurnal.catatan!),
                 ],
                 const SizedBox(height: 8),
-                if (jurnal.dokumentasi != null)
+                if (jurnal.filename != null)
                   Image.network(
-                    jurnal.dokumentasi!,
+                    "https://app.sijasmkn1punggelan.org/storage/jurnal_pkl/${jurnal.filename}",
                     height: 200,
                     width: double.infinity,
                     fit: BoxFit.cover,
