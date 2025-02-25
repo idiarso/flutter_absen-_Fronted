@@ -80,7 +80,7 @@ class InputKegiatanView extends GetView<JurnalPKLController> {
                 'updatedAt': DateTime.now().toIso8601String(),
               };
 
-              controller.submitJurnal(jurnal);
+              controller.submitJurnal(null, jurnal);
             },
           ),
         ],

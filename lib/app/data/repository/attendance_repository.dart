@@ -2,7 +2,7 @@ import 'package:skansapung_presensi/app/data/model/attendance.dart';
 import 'package:skansapung_presensi/app/data/source/attendance_api_service.dart';
 import 'package:skansapung_presensi/app/module/entity/attendance.dart';
 import 'package:skansapung_presensi/app/module/repository/attendance_repository.dart';
-import 'package:skansapung_presensi/app/core/data/data_state.dart';
+import 'package:skansapung_presensi/core/network/data_state.dart';
 import 'package:retrofit/dio.dart';
 import 'package:dio/dio.dart';
 
@@ -32,14 +32,15 @@ class AttendanceRepositoryImpl extends AttendanceRepository {
     try {
       final response = await _attendanceApiService.getAttendanceToday();
       final attendanceModel = AttendanceModel.fromJson(response.data.toJson());
-      return DataSuccess<List<AttendanceEntity>>(attendanceModel.thisMonth);
+      return DataState<List<AttendanceEntity>>(success: true, message: "Success", data: attendanceModel.thisMonth);
     } on DioException catch (e) {
-      return DataFailed(
-        e.message ?? 'Unknown error occurred',
-        e.response?.statusCode ?? 500,
+      return DataState<List<AttendanceEntity>>(
+        success: false,
+        message: e.message ?? 'Unknown error occurred',
+        data: null
       );
     } catch (e) {
-      return DataFailed(e.toString(), 500);
+      return DataState<List<AttendanceEntity>>(success: false, message: e.toString(), data: null);
     }
   }
 
@@ -48,29 +49,31 @@ class AttendanceRepositoryImpl extends AttendanceRepository {
     try {
       final response = await _attendanceApiService.getAttendanceToday();
       final attendanceModel = AttendanceModel.fromJson(response.data.toJson());
-      return DataSuccess<AttendanceEntity?>(attendanceModel.today);
+      return DataState<AttendanceEntity?>(success: true, message: "Success", data: attendanceModel.today);
     } on DioException catch (e) {
-      return DataFailed(
-        e.message ?? 'Unknown error occurred',
-        e.response?.statusCode ?? 500,
+      return DataState<AttendanceEntity?>(
+        success: false,
+        message: e.message ?? 'Unknown error occurred',
+        data: null
       );
     } catch (e) {
-      return DataFailed(e.toString(), 500);
+      return DataState<AttendanceEntity?>(success: false, message: e.toString(), data: null);
     }
   }
 
   @override
-  Future<DataState<bool>> sendAttendance(AttendanceParamEntity param) async {
+  Future<DataState<dynamic>> sendAttendance(AttendanceParamEntity param) async {
     try {
       final response = await _attendanceApiService.sendAttendance(body: param.toJson());
-      return const DataSuccess<bool>(true);
+      return DataState<dynamic>(success: true, message: "Success", data: true);
     } on DioException catch (e) {
-      return DataFailed(
-        e.message ?? 'Error occurred while sending attendance',
-        e.response?.statusCode ?? 500,
+      return DataState<dynamic>(
+        success: false,
+        message: e.message ?? 'Error occurred while sending attendance',
+        data: null
       );
     } catch (e) {
-      return DataFailed(e.toString(), 500);
+      return DataState<dynamic>(success: false, message: e.toString(), data: null);
     }
   }
 
@@ -81,14 +84,16 @@ class AttendanceRepositoryImpl extends AttendanceRepository {
       final response = await _attendanceApiService.getAttendanceByMonthYear(
           param.month.toString(), param.year.toString());
       if (response.isNotEmpty) {
-        return DataSuccess<List<AttendanceEntity>>(
-          List<AttendanceEntity>.from(
-              response.map((item) => AttendanceEntity.fromJson(item.toJson()))),
+        return DataState<List<AttendanceEntity>>(
+          success: true,
+          message: "Success",
+          data: List<AttendanceEntity>.from(
+              response.map((item) => AttendanceEntity.fromJson(item.toJson())))
         );
       }
-      return DataFailed<List<AttendanceEntity>>('No data found', 404);
+      return DataState<List<AttendanceEntity>>(success: false, message: 'No data found', data: []);
     } catch (e) {
-      return DataFailed<List<AttendanceEntity>>(e.toString(), 500);
+      return DataState<List<AttendanceEntity>>(success: false, message: e.toString(), data: null);
     }
   }
 }

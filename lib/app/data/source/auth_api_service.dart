@@ -38,6 +38,9 @@ class AuthResponse {
         'user': user,
       };
     }
+
+    Map<String, dynamic>? get data => user;
+    String? get response => message;
 }
 
 @RestApi(baseUrl: BASE_URL)

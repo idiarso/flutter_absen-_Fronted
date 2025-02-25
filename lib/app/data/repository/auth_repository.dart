@@ -4,7 +4,7 @@ import 'package:skansapung_presensi/app/module/entity/auth.dart';
 import 'package:skansapung_presensi/app/module/repository/auth_repository.dart';
 import 'package:skansapung_presensi/core/constant/constant.dart';
 import 'package:skansapung_presensi/core/helper/shared_preferences_helper.dart';
-import 'package:skansapung_presensi/app/core/data/data_state.dart';
+import 'package:skansapung_presensi/core/network/data_state.dart';
 import 'package:dio/dio.dart';
 
 class AuthRepositoryImpl extends AuthRepository {
@@ -16,21 +16,21 @@ class AuthRepositoryImpl extends AuthRepository {
   Future<DataState<dynamic>> login(AuthEntity param) async {
     try {
       final response = await _authApiService.login(param.toJson());
-      if (response.data.success) {
-        final authModel = AuthModel.fromJson(response.data.data);
+      if (response.success) {
+        final authModel = AuthModel.fromJson(response.user ?? {});
         await SharedPreferencesHelper.setString(
-            PREF_AUTH, '${authModel.tokenType} ${authModel.accessToken}');
+            PREF_AUTH, 'Bearer ${response.token}');
         await SharedPreferencesHelper.setInt(PREF_ID, authModel.user.id);
         await SharedPreferencesHelper.setString(PREF_NAME, authModel.user.name);
         await SharedPreferencesHelper.setString(
             PREF_EMAIL, authModel.user.email);
-        return const DataSuccess<dynamic>(null);
+        return DataState(success: true, message: "Login successful", data: null);
       }
-      return DataFailed<dynamic>(response.data.message, response.response.statusCode);
+      return DataState(success: false, message: response.message, data: null);
     } on DioException catch (e) {
-      return DataFailed<dynamic>(e.message ?? 'Unknown error', e.response?.statusCode ?? 500);
+      return DataState(success: false, message: e.message ?? 'Unknown error', data: null);
     } catch (e) {
-      return DataFailed<dynamic>(e.toString(), 500);
+      return DataState(success: false, message: e.toString(), data: null);
     }
   }
 }

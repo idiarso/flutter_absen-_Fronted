@@ -3,7 +3,7 @@ import 'package:skansapung_presensi/app/module/entity/schedule.dart';
 import 'package:skansapung_presensi/app/module/repository/schedule_repository.dart';
 import 'package:skansapung_presensi/core/constant/constant.dart';
 import 'package:skansapung_presensi/core/helper/shared_preferences_helper.dart';
-import 'package:skansapung_presensi/app/core/data/data_state.dart';
+import 'package:skansapung_presensi/core/network/data_state.dart';
 import 'package:dio/dio.dart';
 
 class ScheduleRepositoryImpl extends ScheduleRepository {
@@ -21,36 +21,27 @@ class ScheduleRepositoryImpl extends ScheduleRepository {
           SharedPreferencesHelper.setString(
               PREF_START_SHIFT, data.shift.startTime);
           SharedPreferencesHelper.setString(PREF_END_SHIFT, data.shift.endTime);
-          return DataSuccess(data);
+          return DataState(success: true, message: "Success", data: data);
         }
-        return const DataSuccess(null);
       }
-      return DataFailed(
-        response.message,
-        404,
-      );
+      return DataState(success: false, message: "No schedules found", data: null);
     } on DioException catch (e) {
-      return DataFailed(e.message ?? 'Unknown error', e.response?.statusCode ?? 500);
-    } catch (e) {
-      return DataFailed(e.toString(), 500);
+      return DataState(success: false, message: e.message ?? 'Failed to load schedule', data: null);
     }
   }
 
   @override
-  Future<DataState<bool>> banned() async {
+  Future<DataState<dynamic>> banned() async {
     try {
       final response = await _scheduleApiService.banned();
       if (response.success) {
-        return DataSuccess(response.isBanned);
+        return DataState(success: true, message: "Success", data: response.isBanned);
       }
-      return DataFailed(
-        response.message,
-        404,
-      );
+      return DataState(success: false, message: response.message, data: null);
     } on DioException catch (e) {
-      return DataFailed(e.message ?? 'Unknown error', e.response?.statusCode ?? 500);
+      return DataState(success: false, message: e.message ?? 'Unknown error', data: null);
     } catch (e) {
-      return DataFailed(e.toString(), 500);
+      return DataState(success: false, message: e.toString(), data: null);
     }
   }
 }
