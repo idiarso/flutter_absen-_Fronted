@@ -21,16 +21,20 @@ class HomeNotifier extends AppProvider {
   final ScheduleGetUseCase _scheduleGetUseCase;
   final ScheduleBannedUseCase _scheduleBannedUseCase;
 
-  HomeNotifier(this._attendanceGetTodayUseCase, this._attendanceGetMonthUseCase,
-      this._scheduleGetUseCase, this._scheduleBannedUseCase) {
+  HomeNotifier(
+    this._attendanceGetTodayUseCase,
+    this._attendanceGetMonthUseCase,
+    this._scheduleGetUseCase,
+    this._scheduleBannedUseCase,
+  ) {
     init();
   }
   bool _isGrantedNotificationPresmission = false;
   int _timeNotification = 5;
-  List<DropdownMenuEntry<int>> _listEditNotification = [
-    DropdownMenuEntry<int>(value: 5, label: '5 menit'),
-    DropdownMenuEntry<int>(value: 15, label: '15 menit'),
-    DropdownMenuEntry<int>(value: 30, label: '30 menit')
+  final List<DropdownMenuEntry<int>> _listEditNotification = [
+    const DropdownMenuEntry<int>(value: 5, label: '5 menit'),
+    const DropdownMenuEntry<int>(value: 15, label: '15 menit'),
+    const DropdownMenuEntry<int>(value: 30, label: '30 menit'),
   ];
   String _name = '';
   bool _isPhysicDevice = true;
@@ -64,12 +68,14 @@ class HomeNotifier extends AppProvider {
   _getUserDetail() async {
     showLoading();
     _name = await SharedPreferencesHelper.getString(PREF_NAME);
-    final pref_notif = await SharedPreferencesHelper.getInt(PREF_NOTIF_SETTING);
-    if (pref_notif != null) {
-      _timeNotification = pref_notif;
+    final prefNotif = await SharedPreferencesHelper.getInt(PREF_NOTIF_SETTING);
+    if (prefNotif != null) {
+      _timeNotification = prefNotif;
     } else {
       await SharedPreferencesHelper.setInt(
-          PREF_NOTIF_SETTING, _timeNotification);
+        PREF_NOTIF_SETTING,
+        _timeNotification,
+      );
     }
     hideLoading();
   }
@@ -93,7 +99,7 @@ class HomeNotifier extends AppProvider {
         await NotificationHelper.isPermissionGranted();
     if (!_isGrantedNotificationPresmission) {
       await NotificationHelper.requestPermission();
-      await Future.delayed(Duration(seconds: 5));
+      await Future.delayed(const Duration(seconds: 5));
       _getNotificationPermission();
     }
   }
@@ -155,11 +161,13 @@ class HomeNotifier extends AppProvider {
 
     await NotificationHelper.cancelAll();
 
-    final startShift =
-        await SharedPreferencesHelper.getString(PREF_START_SHIFT);
+    final startShift = await SharedPreferencesHelper.getString(
+      PREF_START_SHIFT,
+    );
     final endShift = await SharedPreferencesHelper.getString(PREF_END_SHIFT);
-    final prefTimeNotif =
-        await SharedPreferencesHelper.getInt(PREF_NOTIF_SETTING);
+    final prefTimeNotif = await SharedPreferencesHelper.getInt(
+      PREF_NOTIF_SETTING,
+    );
 
     if (prefTimeNotif == null) {
       SharedPreferencesHelper.setInt(PREF_NOTIF_SETTING, _timeNotification);
@@ -168,29 +176,37 @@ class HomeNotifier extends AppProvider {
     }
 
     DateTime startShiftDateTime = DateTimeHelper.parseDateTime(
-        dateTimeString: startShift, format: 'HH:mm:ss');
+      dateTimeString: startShift,
+      format: 'HH:mm:ss',
+    );
 
     DateTime endShiftDateTime = DateTimeHelper.parseDateTime(
-        dateTimeString: endShift, format: 'HH:mm:ss');
+      dateTimeString: endShift,
+      format: 'HH:mm:ss',
+    );
 
-    startShiftDateTime =
-        startShiftDateTime.subtract(Duration(minutes: _timeNotification));
-    endShiftDateTime =
-        endShiftDateTime.subtract(Duration(minutes: _timeNotification));
-
-    await NotificationHelper.scheduleNotification(
-        id: 'start'.hashCode,
-        title: 'Pengingat!',
-        body: 'Jangan lupa untuk buat kehadiran datang',
-        hour: startShiftDateTime.hour,
-        minutes: startShiftDateTime.minute);
+    startShiftDateTime = startShiftDateTime.subtract(
+      Duration(minutes: _timeNotification),
+    );
+    endShiftDateTime = endShiftDateTime.subtract(
+      Duration(minutes: _timeNotification),
+    );
 
     await NotificationHelper.scheduleNotification(
-        id: 'end'.hashCode,
-        title: 'Pengingat!',
-        body: 'Jangan lupa untuk buat kehadiran pulang',
-        hour: endShiftDateTime.hour,
-        minutes: endShiftDateTime.minute);
+      id: 'start'.hashCode,
+      title: 'Pengingat!',
+      body: 'Jangan lupa untuk buat kehadiran datang',
+      hour: startShiftDateTime.hour,
+      minutes: startShiftDateTime.minute,
+    );
+
+    await NotificationHelper.scheduleNotification(
+      id: 'end'.hashCode,
+      title: 'Pengingat!',
+      body: 'Jangan lupa untuk buat kehadiran pulang',
+      hour: endShiftDateTime.hour,
+      minutes: endShiftDateTime.minute,
+    );
     hideLoading();
   }
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/learning_controller.dart';
-import '../../../data/source/learning_api_service.dart';
 
 class LearningView extends GetView<LearningController> {
   const LearningView({Key? key}) : super(key: key);
@@ -9,47 +8,46 @@ class LearningView extends GetView<LearningController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pembelajaran'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Pembelajaran'), centerTitle: true),
       body: Obx(
-        () => controller.isLoading.value
-            ? const Center(child: CircularProgressIndicator())
-            : RefreshIndicator(
-                onRefresh: controller.fetchData,
-                child: controller.error.value != null
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Error: ${controller.error.value}',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(color: Colors.red),
+        () =>
+            controller.isLoading.value
+                ? const Center(child: CircularProgressIndicator())
+                : RefreshIndicator(
+                  onRefresh: controller.fetchData,
+                  child:
+                      controller.error.value != null
+                          ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Error: ${controller.error.value}',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: controller.fetchData,
+                                  child: const Text('Retry'),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: controller.fetchData,
-                              child: const Text('Retry'),
+                          )
+                          : SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildProgressSection(),
+                                  const SizedBox(height: 24),
+                                  _buildActivitiesList(),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                      )
-                    : SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _buildProgressSection(),
-                              const SizedBox(height: 24),
-                              _buildActivitiesList(),
-                            ],
                           ),
-                        ),
-                      ),
-              ),
+                ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed('/learning/create'),
@@ -70,10 +68,7 @@ class LearningView extends GetView<LearningController> {
           children: [
             const Text(
               'Progress Pembelajaran',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             LinearProgressIndicator(
@@ -86,10 +81,7 @@ class LearningView extends GetView<LearningController> {
             const SizedBox(height: 8),
             Text(
               '${progress.completedActivities} dari ${progress.totalActivities} aktivitas selesai',
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
+              style: const TextStyle(fontSize: 14, color: Colors.grey),
             ),
           ],
         ),
@@ -103,10 +95,7 @@ class LearningView extends GetView<LearningController> {
       return const Center(
         child: Text(
           'Belum ada aktivitas pembelajaran',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey,
-          ),
+          style: TextStyle(fontSize: 16, color: Colors.grey),
         ),
       );
     }
@@ -137,10 +126,8 @@ class LearningView extends GetView<LearningController> {
             ),
             trailing: IconButton(
               icon: const Icon(Icons.chevron_right),
-              onPressed: () => Get.toNamed(
-                '/learning/detail',
-                arguments: activity,
-              ),
+              onPressed:
+                  () => Get.toNamed('/learning/detail', arguments: activity),
             ),
           ),
         );

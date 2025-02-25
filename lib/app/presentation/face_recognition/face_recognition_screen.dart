@@ -3,75 +3,75 @@ import 'package:skansapung_presensi/app/presentation/map/map_screen.dart';
 import 'package:skansapung_presensi/core/helper/global_helper.dart';
 import 'package:skansapung_presensi/core/widget/app_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class FaceRecognitionScreen
     extends AppWidget<FaceRecognitionNotifier, void, void> {
+  FaceRecognitionScreen({super.key});
+
   @override
   void checkVariableAfterUi(BuildContext context) {
     if (notifier.percentMatch >= 70) {
       Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MapScreen(),
-          ));
+        context,
+        MaterialPageRoute(builder: (context) => MapScreen()),
+      );
     }
   }
 
   @override
   AppBar? appBarBuild(BuildContext context) {
-    return AppBar(
-      title: Text('Validasi Wajah'),
-    );
+    return AppBar(title: const Text('Validasi Wajah'));
   }
 
   @override
   Widget bodyBuild(BuildContext context) {
     return SafeArea(
-        child: Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          (notifier.currentImage != null)
-              ? Image(
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            (notifier.currentImage != null)
+                ? Image(
                   height: 150,
                   width: 150,
                   image: notifier.currentImage!.image,
                 )
-              : Icon(
-                  Icons.no_photography,
-                  size: 75,
-                ),
-          SizedBox(
-            height: 50,
-          ),
-          (notifier.currentImage == null)
-              ? Text(
+                : const Icon(Icons.no_photography, size: 75),
+            const SizedBox(height: 50),
+            (notifier.currentImage == null)
+                ? Text(
                   'Gagal mengambil foto',
-                  style: GlobalHelper.getTextStyle(context,
-                      appTextStyle: AppTextStyle.HEADLINE_MEDIUM),
+                  style: GlobalHelper.getTextStyle(
+                    context,
+                    appTextStyle: AppTextStyle.HEADLINE_MEDIUM,
+                  ),
                 )
-              : (notifier.percentMatch < 0.0)
-                  ? Text(
-                      'Sistem mendeteksi wajah anda tidak memiliki hak untuk buat kehadiran',
-                      style: GlobalHelper.getTextStyle(context,
-                          appTextStyle: AppTextStyle.HEADLINE_SMALL),
-                      textAlign: TextAlign.center,
-                    )
-                  : Text(
-                      'Tingkat kemiripan : ${notifier.percentMatch}%',
-                      style: GlobalHelper.getTextStyle(context,
-                          appTextStyle: AppTextStyle.HEADLINE_MEDIUM),
-                      textAlign: TextAlign.center,
-                    ),
-          SizedBox(
-            height: 25,
-          ),
-          FilledButton(
-              onPressed: _onPressOpenCamera, child: Text('Buka Kamera'))
-        ],
+                : (notifier.percentMatch < 0.0)
+                ? Text(
+                  'Sistem mendeteksi wajah anda tidak memiliki hak untuk buat kehadiran',
+                  style: GlobalHelper.getTextStyle(
+                    context,
+                    appTextStyle: AppTextStyle.HEADLINE_SMALL,
+                  ),
+                  textAlign: TextAlign.center,
+                )
+                : Text(
+                  'Tingkat kemiripan : ${notifier.percentMatch}%',
+                  style: GlobalHelper.getTextStyle(
+                    context,
+                    appTextStyle: AppTextStyle.HEADLINE_MEDIUM,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+            const SizedBox(height: 25),
+            FilledButton(
+              onPressed: _onPressOpenCamera,
+              child: const Text('Buka Kamera'),
+            ),
+          ],
+        ),
       ),
-    ));
+    );
   }
 
   _onPressOpenCamera() {

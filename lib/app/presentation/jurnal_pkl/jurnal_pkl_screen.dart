@@ -3,6 +3,8 @@ import 'package:skansapung_presensi/app/presentation/jurnal_pkl/jurnal_pkl_notif
 import 'package:skansapung_presensi/core/widget/app_widget.dart';
 
 class JurnalPKLScreen extends AppWidget<JurnalPKLNotifier, void, void> {
+  JurnalPKLScreen({super.key});
+
   @override
   Widget bodyBuild(BuildContext context) {
     return SafeArea(
@@ -31,9 +33,7 @@ class JurnalPKLScreen extends AppWidget<JurnalPKLNotifier, void, void> {
                     ),
                     const Text(
                       'Selamat Datang',
-                      style: TextStyle(
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(color: Colors.grey),
                     ),
                   ],
                 ),
@@ -72,10 +72,7 @@ class JurnalPKLScreen extends AppWidget<JurnalPKLNotifier, void, void> {
                 children: [
                   const Text(
                     'Menu Utama',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
                   GridView.count(
@@ -136,14 +133,11 @@ class JurnalPKLScreen extends AppWidget<JurnalPKLNotifier, void, void> {
                     ],
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Pemberitahuan Section
                   const Text(
                     'Pemberitahuan',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
                   Container(
@@ -208,11 +202,7 @@ class JurnalPKLScreen extends AppWidget<JurnalPKLNotifier, void, void> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: color,
-              size: 24,
-            ),
+            Icon(icon, color: color, size: 24),
             const SizedBox(height: 4),
             Text(
               label,

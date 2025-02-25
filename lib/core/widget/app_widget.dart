@@ -4,7 +4,6 @@ import 'package:skansapung_presensi/core/provider/app_provider.dart';
 import 'package:skansapung_presensi/core/widget/error_app_widget.dart';
 import 'package:skansapung_presensi/core/widget/loading_app_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 abstract class AppWidget<T extends AppProvider, P1, P2>
@@ -31,31 +30,32 @@ abstract class AppWidget<T extends AppProvider, P1, P2>
     notifier = Provider.of<T>(context);
     checkVariableBeforeUi(context);
 
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        if (notifier.snackbarMessage.isNotEmpty) {
-          DialogHelper.showSnackbar(
-              context: context, text: notifier.snackbarMessage);
-          notifier.snackbarMessage = '';
-        }
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      if (notifier.snackbarMessage.isNotEmpty) {
+        DialogHelper.showSnackbar(
+          context: context,
+          text: notifier.snackbarMessage,
+        );
+        notifier.snackbarMessage = '';
+      }
 
-        checkVariableAfterUi(context);
-      },
-    );
+      checkVariableAfterUi(context);
+    });
 
     return Scaffold(
       appBar: appBarBuild(context),
-      body: (notifier.isLoading)
-          ? LoadingAppWidget()
-          : (notifier.errorMessage.isNotEmpty)
+      body:
+          (notifier.isLoading)
+              ? const LoadingAppWidget()
+              : (notifier.errorMessage.isNotEmpty)
               ? ErrorAppWidget(
-                  description: notifier.errorMessage,
-                  onPressDefaultButton: () {
-                    notifier.init();
-                    notifier.errorMeesage = '';
-                  },
-                  alternatifButton: _alternatifErrorButton,
-                )
+                description: notifier.errorMessage,
+                onPressDefaultButton: () {
+                  notifier.init();
+                  notifier.errorMeesage = '';
+                },
+                alternatifButton: _alternatifErrorButton,
+              )
               : bodyBuild(context),
     );
   }

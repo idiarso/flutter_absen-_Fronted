@@ -3,17 +3,17 @@ import 'package:skansapung_presensi/app/presentation/login/login_notifier.dart';
 import 'package:skansapung_presensi/core/helper/global_helper.dart';
 import 'package:skansapung_presensi/core/widget/app_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class LoginScreen extends AppWidget<LoginNotifier, void, void> {
+  LoginScreen({super.key});
+
   @override
   void checkVariableAfterUi(BuildContext context) {
     if (notifier.isLoged) {
       Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => HomeScreen(),
-          ));
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
     }
   }
 
@@ -22,7 +22,7 @@ class LoginScreen extends AppWidget<LoginNotifier, void, void> {
     return SafeArea(
       child: Container(
         width: double.maxFinite,
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -30,48 +30,49 @@ class LoginScreen extends AppWidget<LoginNotifier, void, void> {
               child: Center(
                 child: Text(
                   'skansapung Presensi',
-                  style: GlobalHelper.getTextStyle(context,
-                          appTextStyle: AppTextStyle.DISPLAY_MEDIUM)
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: GlobalHelper.getTextStyle(
+                    context,
+                    appTextStyle: AppTextStyle.DISPLAY_MEDIUM,
+                  )?.copyWith(fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
               ),
             ),
-            SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             TextField(
               controller: notifier.emailController,
-              decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.email),
-                  label: Text('Email'),
-                  border: OutlineInputBorder()),
+              decoration: const InputDecoration(
+                prefixIcon: Icon(Icons.email),
+                label: Text('Email'),
+                border: OutlineInputBorder(),
+              ),
             ),
-            SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             TextField(
               controller: notifier.passwordController,
               obscureText: !notifier.isShowPassword,
               decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.password),
-                  label: Text('Password'),
-                  border: OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: Icon((notifier.isShowPassword)
+                prefixIcon: const Icon(Icons.password),
+                label: const Text('Password'),
+                border: const OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    (notifier.isShowPassword)
                         ? Icons.visibility_off
-                        : Icons.visibility),
-                    onPressed: _showHidePassword,
-                  )),
+                        : Icons.visibility,
+                  ),
+                  onPressed: _showHidePassword,
+                ),
+              ),
             ),
+            const SizedBox(height: 20),
             SizedBox(
-              height: 20,
+              width: double.maxFinite,
+              child: FilledButton(
+                onPressed: () => _onPressLogin(context),
+                child: const Text("Login"),
+              ),
             ),
-            Container(
-                width: double.maxFinite,
-                child: FilledButton(
-                    onPressed: () => _onPressLogin(context),
-                    child: Text("Login")))
           ],
         ),
       ),

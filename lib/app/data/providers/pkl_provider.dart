@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import '../models/jurnal_pkl_model.dart';
 import '../source/pkl_api_service.dart';
 
@@ -75,7 +74,11 @@ class PKLProvider {
     }
   }
 
-  Future<void> updateJurnalStatus(int id, String status, {String? catatan}) async {
+  Future<void> updateJurnalStatus(
+    int id,
+    String status, {
+    String? catatan,
+  }) async {
     try {
       await _apiService.updateJurnalStatus(id, status, catatan);
     } catch (e) {

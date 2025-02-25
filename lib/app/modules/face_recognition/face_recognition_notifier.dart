@@ -10,9 +10,11 @@ import 'package:geolocator/geolocator.dart';
 
 class FaceRecognitionNotifier extends AppProvider {
   final PhotoGetBytesUseCase _photoGetBytesUseCase;
+  @override
   String errorMessage = '';
-  final AttendanceSendUseCase _attendanceSendUseCase = Get.find<AttendanceSendUseCase>();
-  
+  final AttendanceSendUseCase _attendanceSendUseCase =
+      Get.find<AttendanceSendUseCase>();
+
   // Status presensi
   RxBool isVerified = false.obs;
   RxString verificationMessage = "".obs;
@@ -21,7 +23,7 @@ class FaceRecognitionNotifier extends AppProvider {
     init();
   }
 
-  FaceSDK _faceSDK = FaceSDK.instance;
+  final FaceSDK _faceSDK = FaceSDK.instance;
   MatchFacesImage? mfImage1;
   MatchFacesImage? mfImage2;
   Uint8List? _currentImage;
@@ -65,10 +67,11 @@ class FaceRecognitionNotifier extends AppProvider {
     final response = await _faceSDK.startFaceCapture();
     final image = response.image;
     if (image != null) _setImage(image.image, image.imageType, 2);
-    if (_currentImage != null)
+    if (_currentImage != null) {
       _matchFaces();
-    else
+    } else {
       notifyListeners();
+    }
   }
 
   _matchFaces() async {
@@ -80,35 +83,39 @@ class FaceRecognitionNotifier extends AppProvider {
     final match = split.matchedFaces;
     if (match.isNotEmpty) {
       _percentMatch = match[0].similarity * 100;
-      
+
       // Update status verifikasi
       if (_percentMatch >= 80) {
         isVerified.value = true;
-        verificationMessage.value = "Wajah terverifikasi! Silakan lanjutkan presensi.";
+        verificationMessage.value =
+            "Wajah terverifikasi! Silakan lanjutkan presensi.";
       } else {
         isVerified.value = false;
-        verificationMessage.value = "Verifikasi gagal. Kemiripan tidak mencukupi.";
+        verificationMessage.value =
+            "Verifikasi gagal. Kemiripan tidak mencukupi.";
       }
     } else {
       _percentMatch = -1;
       isVerified.value = false;
-      verificationMessage.value = "Wajah tidak terdeteksi dengan benar. Coba lagi.";
+      verificationMessage.value =
+          "Wajah tidak terdeteksi dengan benar. Coba lagi.";
     }
     hideLoading();
   }
-  
+
   // Method baru untuk mendapatkan lokasi saat ini
   Future<Position?> _getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
-    
+
     // Cek apakah layanan lokasi diaktifkan
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      verificationMessage.value = 'Layanan lokasi tidak aktif. Aktifkan layanan lokasi.';
+      verificationMessage.value =
+          'Layanan lokasi tidak aktif. Aktifkan layanan lokasi.';
       return null;
     }
-    
+
     // Cek izin lokasi
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
@@ -118,16 +125,17 @@ class FaceRecognitionNotifier extends AppProvider {
         return null;
       }
     }
-    
+
     if (permission == LocationPermission.deniedForever) {
-      verificationMessage.value = 'Izin lokasi ditolak secara permanen. Ubah di pengaturan.';
+      verificationMessage.value =
+          'Izin lokasi ditolak secara permanen. Ubah di pengaturan.';
       return null;
     }
-    
+
     // Dapatkan posisi saat ini
     return await Geolocator.getCurrentPosition();
   }
-  
+
   // Method untuk mengirim data presensi
   Future<void> submitAttendance() async {
     if (!isVerified.value) {
@@ -139,9 +147,9 @@ class FaceRecognitionNotifier extends AppProvider {
       );
       return;
     }
-    
+
     showLoading();
-    
+
     try {
       // Dapatkan lokasi saat ini
       final position = await _getCurrentLocation();
@@ -155,18 +163,18 @@ class FaceRecognitionNotifier extends AppProvider {
         );
         return;
       }
-      
+
       // Siapkan data presensi - tanpa parameter 'photo' karena tidak ada di AttendanceParamEntity
       final attendanceParam = AttendanceParamEntity(
         latitude: position.latitude,
         longitude: position.longitude,
       );
-      
+
       // Kirim data presensi - gunakan call() sebagai metode eksekusi
       final result = await _attendanceSendUseCase.call(param: attendanceParam);
-      
+
       hideLoading();
-      
+
       if (result.success) {
         Get.snackbar(
           'Sukses',
@@ -194,4 +202,4 @@ class FaceRecognitionNotifier extends AppProvider {
       );
     }
   }
-} 
+}

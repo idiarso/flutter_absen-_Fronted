@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 import '../../../data/models/jurnal_pkl_model.dart';
 import '../../../data/source/pkl_api_service.dart';
 import '../../../module/use_case/pkl_get_locations.dart';
@@ -56,7 +55,7 @@ class JurnalPKLController extends GetxController {
   final startDate = Rxn<DateTime>();
   final endDate = Rxn<DateTime>();
   final _selectedFilter = 'all'.obs;
-  
+
   // Added missing variables
   final selectedDate = Rx<String>(DateTime.now().toString().substring(0, 10));
   final selectedImage = Rxn<XFile>();
@@ -131,7 +130,7 @@ class JurnalPKLController extends GetxController {
     try {
       final formattedStartDate = startDate.value?.toIso8601String();
       final formattedEndDate = endDate.value?.toIso8601String();
-      
+
       jurnalList.value = await _getJurnalListUseCase(
         search: searchQuery.value,
         status: selectedStatus.value,
@@ -153,7 +152,11 @@ class JurnalPKLController extends GetxController {
     }
   }
 
-  Future<void> updateJurnalStatus(int id, String status, {String? catatan}) async {
+  Future<void> updateJurnalStatus(
+    int id,
+    String status, {
+    String? catatan,
+  }) async {
     try {
       await _updateJurnalStatusUseCase(id, status, catatan: catatan);
       await fetchJurnalList(); // Refresh list after update
@@ -165,7 +168,10 @@ class JurnalPKLController extends GetxController {
   }
 
   // Updated submitJurnal method to accept optional parameters
-  Future<void> submitJurnal([JurnalPKL? jurnal, Map<String, dynamic>? data]) async {
+  Future<void> submitJurnal([
+    JurnalPKL? jurnal,
+    Map<String, dynamic>? data,
+  ]) async {
     if (jurnal == null && data == null) {
       // Using form data
       if (kegiatanController.text.isEmpty || lokasiController.text.isEmpty) {
@@ -233,7 +239,7 @@ class JurnalPKLController extends GetxController {
     try {
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-      
+
       if (image != null) {
         imagePath.value = image.path;
         imageBytes.value = await image.readAsBytes();
@@ -252,9 +258,10 @@ class JurnalPKLController extends GetxController {
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
-    
+
     if (picked != null) {
-      selectedDate.value = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+      selectedDate.value =
+          "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
     }
   }
 
@@ -293,10 +300,10 @@ class JurnalPKLController extends GetxController {
   // Method to filter journal entries based on status
   void filterJurnal(String status) {
     _selectedFilter.value = status;
-    
+
     // Update the selectedStatus to match the filter
     selectedStatus.value = status == 'all' ? null : status;
-    
+
     // Fetch the filtered journal list
     fetchJurnalList();
   }
@@ -305,28 +312,26 @@ class JurnalPKLController extends GetxController {
   Future<void> exportToPDF() async {
     try {
       isLoading.value = true;
-      
+
       // Show a loading indicator
       Get.dialog(
-        const Center(
-          child: CircularProgressIndicator(),
-        ),
+        const Center(child: CircularProgressIndicator()),
         barrierDismissible: false,
       );
-      
+
       // TODO: Implement actual PDF generation logic
       // This would typically involve:
       // 1. Gathering all the necessary data
       // 2. Using a PDF generation package like pdf, printing, etc.
       // 3. Generating the PDF file
       // 4. Saving or sharing the file
-      
+
       // Simulate PDF generation with a delay
       await Future.delayed(const Duration(seconds: 2));
-      
+
       // Close the loading dialog
       Get.back();
-      
+
       // Show success message
       Get.snackbar(
         'Success',
@@ -358,24 +363,24 @@ class JurnalPKLController extends GetxController {
   List<MonthlyProgress> get monthlyProgress {
     // If progress is null, return empty list
     if (progress.value == null) return [];
-    
+
     // Convert attendanceByMonth to MonthlyProgress objects
     final List<MonthlyProgress> result = [];
-    
+
     // Get total count for percentage calculation
-    final totalEntries = progress.value!.attendanceByMonth.values
-        .fold<int>(0, (sum, count) => sum + count);
-    
+    final totalEntries = progress.value!.attendanceByMonth.values.fold<int>(
+      0,
+      (sum, count) => sum + count,
+    );
+
     // Convert each month entry to MonthlyProgress
     progress.value!.attendanceByMonth.forEach((month, count) {
       final percentage = totalEntries > 0 ? (count / totalEntries) * 100 : 0.0;
-      result.add(MonthlyProgress(
-        month: month,
-        count: count,
-        percentage: percentage,
-      ));
+      result.add(
+        MonthlyProgress(month: month, count: count, percentage: percentage),
+      );
     });
-    
+
     return result;
   }
 }

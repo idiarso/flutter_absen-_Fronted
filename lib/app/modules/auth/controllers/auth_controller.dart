@@ -4,12 +4,6 @@ import '../../../data/models/user_model.dart';
 class AuthController extends GetxController {
   final user = Rxn<User>();
 
-  @override
-  void onInit() {
-    super.onInit();
-    // TODO: Load user data from storage or API
-  }
-
   Future<void> login(String username, String password) async {
     try {
       // TODO: Implement login logic

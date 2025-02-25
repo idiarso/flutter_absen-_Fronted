@@ -14,8 +14,8 @@ class LoginNotifier extends AppProvider {
 
   bool _isLoged = false;
   bool _isShowPassword = false;
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   bool get isLoged => _isLoged;
   bool get isShowPassword => _isShowPassword;
@@ -42,7 +42,9 @@ class LoginNotifier extends AppProvider {
   login() async {
     showLoading();
     final param = AuthEntity(
-        email: _emailController.text, password: _passwordController.text);
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
     final response = await _authLoginUseCase(param: param);
     if (response.success) {
     } else {

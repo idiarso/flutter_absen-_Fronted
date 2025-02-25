@@ -40,7 +40,7 @@ class AppErrorHandler {
   }
 
   static String _handleResponseError(int? statusCode, dynamic responseData) {
-    final defaultMessage = 'An unexpected error occurred. Please try again.';
+    const defaultMessage = 'An unexpected error occurred. Please try again.';
     final message =
         responseData is Map
             ? responseData['message']?.toString() ?? defaultMessage

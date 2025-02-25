@@ -62,10 +62,7 @@ class AppPages {
           name: _Paths.RIWAYAT_KEGIATAN,
           page: () => const RiwayatKegiatanView(),
         ),
-        GetPage(
-          name: _Paths.LAPORAN_PKL,
-          page: () => const LaporanPKLView(),
-        ),
+        GetPage(name: _Paths.LAPORAN_PKL, page: () => const LaporanPKLView()),
       ],
     ),
     GetPage(
@@ -80,7 +77,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.FACE_RECOGNITION,
-      page: () => FaceRecognitionScreen(),
+      page: () => const FaceRecognitionScreen(),
       binding: FaceRecognitionBinding(),
     ),
   ];

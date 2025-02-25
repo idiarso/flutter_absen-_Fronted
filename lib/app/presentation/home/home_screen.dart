@@ -17,6 +17,8 @@ import 'package:flutter/widgets.dart';
 import 'package:retrofit/http.dart';
 
 class HomeScreen extends AppWidget<HomeNotifier, void, void> {
+  HomeScreen({super.key});
+
   @override
   Widget bodyBuild(BuildContext context) {
     return SafeArea(
@@ -28,7 +30,7 @@ class HomeScreen extends AppWidget<HomeNotifier, void, void> {
               _headerLayout(context),
               _menuGrid(context),
               _todayLayout(context),
-              _thisMonthLayout(context)
+              _thisMonthLayout(context),
             ],
           ),
         ),
@@ -38,72 +40,64 @@ class HomeScreen extends AppWidget<HomeNotifier, void, void> {
 
   _headerLayout(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(20, 30, 20, 20),
+      padding: const EdgeInsets.fromLTRB(20, 30, 20, 20),
       child: Row(
         children: [
           CircleAvatar(
-            child: Icon(
-              Icons.person,
-              size: 40,
-            ),
             backgroundColor:
                 GlobalHelper.getColorSchema(context).primaryContainer,
             radius: 30,
+            child: const Icon(Icons.person, size: 40),
           ),
-          SizedBox(
-            width: 10,
-          ),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   notifier.name,
-                  style: GlobalHelper.getTextStyle(context,
-                          appTextStyle: AppTextStyle.HEADLINE_SMALL)
-                      ?.copyWith(fontWeight: FontWeight.bold),
+                  style: GlobalHelper.getTextStyle(
+                    context,
+                    appTextStyle: AppTextStyle.HEADLINE_SMALL,
+                  )?.copyWith(fontWeight: FontWeight.bold),
                 ),
-                SizedBox(
-                  height: 5,
-                ),
+                const SizedBox(height: 5),
                 (notifier.isLeaves)
-                    ? SizedBox()
+                    ? const SizedBox()
                     : Row(
-                        children: [
-                          Expanded(
-                              child: Row(
+                      children: [
+                        Expanded(
+                          child: Row(
                             children: [
-                              Icon(Icons.location_city),
-                              SizedBox(
-                                width: 5,
-                              ),
+                              const Icon(Icons.location_city),
+                              const SizedBox(width: 5),
                               Text(notifier.schedule?.office.name ?? ''),
                             ],
-                          )),
-                          Expanded(
-                              child: Row(
+                          ),
+                        ),
+                        Expanded(
+                          child: Row(
                             children: [
-                              Icon(Icons.access_time),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text(notifier.schedule?.shift.name ?? '')
+                              const Icon(Icons.access_time),
+                              const SizedBox(width: 5),
+                              Text(notifier.schedule?.shift.name ?? ''),
                             ],
-                          ))
-                        ],
-                      )
+                          ),
+                        ),
+                      ],
+                    ),
               ],
             ),
           ),
-          SizedBox(
-            width: 10,
+          const SizedBox(width: 10),
+          IconButton(
+            onPressed: () => _onPressEditNotification(context),
+            icon: const Icon(Icons.edit_notifications),
           ),
           IconButton(
-              onPressed: () => _onPressEditNotification(context),
-              icon: Icon(Icons.edit_notifications)),
-          IconButton(
-              onPressed: () => _onPressLogout(context),
-              icon: Icon(Icons.logout))
+            onPressed: () => _onPressLogout(context),
+            icon: const Icon(Icons.logout),
+          ),
         ],
       ),
     );
@@ -117,10 +111,7 @@ class HomeScreen extends AppWidget<HomeNotifier, void, void> {
         children: [
           const Text(
             'Menu',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
           GridView.count(
@@ -177,11 +168,7 @@ class HomeScreen extends AppWidget<HomeNotifier, void, void> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: color,
-              size: 24,
-            ),
+            Icon(icon, color: color, size: 24),
             const SizedBox(height: 4),
             Text(
               label,
@@ -200,79 +187,90 @@ class HomeScreen extends AppWidget<HomeNotifier, void, void> {
 
   _todayLayout(BuildContext context) {
     return Container(
-      margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
-      padding: EdgeInsets.all(20),
+      margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: GlobalHelper.getColorSchema(context).primary),
+        borderRadius: BorderRadius.circular(20),
+        color: GlobalHelper.getColorSchema(context).primary,
+      ),
       child: Column(
         children: [
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(5),
+                padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: GlobalHelper.getColorSchema(context).onPrimary),
+                  borderRadius: BorderRadius.circular(10),
+                  color: GlobalHelper.getColorSchema(context).onPrimary,
+                ),
                 child: Row(
                   children: [
-                    Icon(Icons.today),
-                    SizedBox(
-                      width: 5,
+                    const Icon(Icons.today),
+                    const SizedBox(width: 5),
+                    Text(
+                      DateTimeHelper.formatDateTime(
+                        dateTime: DateTime.now(),
+                        format: 'EEE, dd MMM yyyy',
+                      ),
                     ),
-                    Text(DateTimeHelper.formatDateTime(
-                        dateTime: DateTime.now(), format: 'EEE, dd MMM yyyy')),
                   ],
                 ),
               ),
-              Expanded(child: SizedBox()),
+              const Expanded(child: SizedBox()),
               (notifier.isLeaves)
-                  ? SizedBox()
+                  ? const SizedBox()
                   : Container(
-                      padding: EdgeInsets.all(5),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color:
-                              GlobalHelper.getColorSchema(context).onPrimary),
-                      child: Text(
-                          (notifier.schedule?.isWfa ?? false) ? 'WFA' : 'WFO'))
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: GlobalHelper.getColorSchema(context).onPrimary,
+                    ),
+                    child: Text(
+                      (notifier.schedule?.isWfa ?? false) ? 'WFA' : 'WFO',
+                    ),
+                  ),
             ],
           ),
-          SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           Row(
             children: [
-              _timeTodayLayout(context, 'Datang',
-                  notifier.attendanceToday?.startTime ?? '-'),
               _timeTodayLayout(
-                  context, 'Pulang', notifier.attendanceToday?.endTime ?? '-')
+                context,
+                'Datang',
+                notifier.attendanceToday?.startTime ?? '-',
+              ),
+              _timeTodayLayout(
+                context,
+                'Pulang',
+                notifier.attendanceToday?.endTime ?? '-',
+              ),
             ],
           ),
-          SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           (notifier.isLeaves)
               ? Text(
-                  'Anda hari ini sedang cuti',
-                  style: GlobalHelper.getTextStyle(context,
-                          appTextStyle: AppTextStyle.TITLE_LARGE)
-                      ?.copyWith(
-                          color: GlobalHelper.getColorSchema(context).onPrimary,
-                          fontWeight: FontWeight.bold),
-                )
-              : Container(
-                  width: double.maxFinite,
-                  child: FilledButton(
-                    onPressed: () => _onPressCreateAttendance(context),
-                    child: Text('Buat Kehadiran'),
-                    style: FilledButton.styleFrom(
-                        backgroundColor:
-                            GlobalHelper.getColorSchema(context).onPrimary,
-                        foregroundColor:
-                            GlobalHelper.getColorSchema(context).primary),
+                'Anda hari ini sedang cuti',
+                style: GlobalHelper.getTextStyle(
+                  context,
+                  appTextStyle: AppTextStyle.TITLE_LARGE,
+                )?.copyWith(
+                  color: GlobalHelper.getColorSchema(context).onPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              )
+              : SizedBox(
+                width: double.maxFinite,
+                child: FilledButton(
+                  onPressed: () => _onPressCreateAttendance(context),
+                  style: FilledButton.styleFrom(
+                    backgroundColor:
+                        GlobalHelper.getColorSchema(context).onPrimary,
+                    foregroundColor:
+                        GlobalHelper.getColorSchema(context).primary,
                   ),
-                )
+                  child: const Text('Buat Kehadiran'),
+                ),
+              ),
         ],
       ),
     );
@@ -281,13 +279,15 @@ class HomeScreen extends AppWidget<HomeNotifier, void, void> {
   _thisMonthLayout(BuildContext context) {
     return Container(
       constraints: BoxConstraints(
-          minHeight: MediaQuery.of(context).size.height - kToolbarHeight),
+        minHeight: MediaQuery.of(context).size.height - kToolbarHeight,
+      ),
       width: double.maxFinite,
-      margin: EdgeInsets.only(top: 10),
-      padding: EdgeInsets.all(20),
+      margin: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          color: GlobalHelper.getColorSchema(context).primaryContainer),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        color: GlobalHelper.getColorSchema(context).primaryContainer,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -296,74 +296,89 @@ class HomeScreen extends AppWidget<HomeNotifier, void, void> {
               Expanded(
                 child: Text(
                   'Presensi Sebulan Terakhir',
-                  style: GlobalHelper.getTextStyle(context,
-                      appTextStyle: AppTextStyle.TITLE_LARGE),
+                  style: GlobalHelper.getTextStyle(
+                    context,
+                    appTextStyle: AppTextStyle.TITLE_LARGE,
+                  ),
                 ),
               ),
               FilledButton(
-                  onPressed: () => _onPressSeeAll(context),
-                  child: Text('Lihat Semua'))
+                onPressed: () => _onPressSeeAll(context),
+                child: const Text('Lihat Semua'),
+              ),
             ],
           ),
-          SizedBox(
-            height: 5,
-          ),
+          const SizedBox(height: 5),
           Container(
             height: 1,
             color: GlobalHelper.getColorSchema(context).primary,
           ),
-          SizedBox(
-            height: 2,
-          ),
+          const SizedBox(height: 2),
           Row(
             children: [
               Expanded(
-                  flex: 1,
-                  child: Center(
-                    child: Text(
-                      'Tgl',
-                      style: GlobalHelper.getTextStyle(context,
-                          appTextStyle: AppTextStyle.TITLE_SMALL),
+                flex: 1,
+                child: Center(
+                  child: Text(
+                    'Tgl',
+                    style: GlobalHelper.getTextStyle(
+                      context,
+                      appTextStyle: AppTextStyle.TITLE_SMALL,
                     ),
-                  )),
+                  ),
+                ),
+              ),
               Expanded(
-                  flex: 2,
-                  child: Center(
-                      child: Text(
+                flex: 2,
+                child: Center(
+                  child: Text(
                     'Datang',
-                    style: GlobalHelper.getTextStyle(context,
-                        appTextStyle: AppTextStyle.TITLE_SMALL),
-                  ))),
+                    style: GlobalHelper.getTextStyle(
+                      context,
+                      appTextStyle: AppTextStyle.TITLE_SMALL,
+                    ),
+                  ),
+                ),
+              ),
               Expanded(
-                  flex: 2,
-                  child: Center(
-                      child: Text('Pulang',
-                          style: GlobalHelper.getTextStyle(context,
-                              appTextStyle: AppTextStyle.TITLE_SMALL))))
+                flex: 2,
+                child: Center(
+                  child: Text(
+                    'Pulang',
+                    style: GlobalHelper.getTextStyle(
+                      context,
+                      appTextStyle: AppTextStyle.TITLE_SMALL,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
-          SizedBox(
-            height: 2,
-          ),
+          const SizedBox(height: 2),
           Container(
             height: 2,
             color: GlobalHelper.getColorSchema(context).primary,
           ),
           ListView.separated(
-            physics: NeverScrollableScrollPhysics(),
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            separatorBuilder: (context, index) => Container(
-              margin: EdgeInsets.symmetric(vertical: 2),
-              height: 1,
-              color: GlobalHelper.getColorSchema(context).surface,
-            ),
+            separatorBuilder:
+                (context, index) => Container(
+                  margin: const EdgeInsets.symmetric(vertical: 2),
+                  height: 1,
+                  color: GlobalHelper.getColorSchema(context).surface,
+                ),
             itemCount: notifier.listAttendanceThisMonth.length,
             itemBuilder: (context, index) {
-              final item = notifier.listAttendanceThisMonth[
-                  notifier.listAttendanceThisMonth.length - index - 1];
+              final item =
+                  notifier.listAttendanceThisMonth[notifier
+                          .listAttendanceThisMonth
+                          .length -
+                      index -
+                      1];
               return _itemThisMonth(context, item);
             },
-          )
+          ),
         ],
       ),
     );
@@ -371,64 +386,82 @@ class HomeScreen extends AppWidget<HomeNotifier, void, void> {
 
   _timeTodayLayout(BuildContext context, String label, String time) {
     return Expanded(
-        child: Column(
-      children: [
-        Text(
-          time,
-          style: GlobalHelper.getTextStyle(context,
-                  appTextStyle: AppTextStyle.HEADLINE_MEDIUM)
-              ?.copyWith(
-                  color: GlobalHelper.getColorSchema(context).onPrimary,
-                  fontWeight: FontWeight.bold),
-        ),
-        Text(
-          label,
-          style: GlobalHelper.getTextStyle(context,
-                  appTextStyle: AppTextStyle.BODY_MEDIUM)
-              ?.copyWith(color: GlobalHelper.getColorSchema(context).onPrimary),
-        )
-      ],
-    ));
+      child: Column(
+        children: [
+          Text(
+            time,
+            style: GlobalHelper.getTextStyle(
+              context,
+              appTextStyle: AppTextStyle.HEADLINE_MEDIUM,
+            )?.copyWith(
+              color: GlobalHelper.getColorSchema(context).onPrimary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            label,
+            style: GlobalHelper.getTextStyle(
+              context,
+              appTextStyle: AppTextStyle.BODY_MEDIUM,
+            )?.copyWith(color: GlobalHelper.getColorSchema(context).onPrimary),
+          ),
+        ],
+      ),
+    );
   }
 
   _itemThisMonth(BuildContext context, AttendanceEntity item) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 3),
+      margin: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         children: [
           Expanded(
-              flex: 1,
-              child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 2, horizontal: 5),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
-                      color: GlobalHelper.getColorSchema(context).primary),
-                  child: Text(
-                    DateTimeHelper.formatDateTimeFromString(
-                        dateTimeString: item.date!, formar: 'dd\nMMM'),
-                    style: GlobalHelper.getTextStyle(context,
-                            appTextStyle: AppTextStyle.LABEL_LARGE)
-                        ?.copyWith(
-                            color:
-                                GlobalHelper.getColorSchema(context).onPrimary),
-                    textAlign: TextAlign.center,
-                  ))),
+            flex: 1,
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 5),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5),
+                color: GlobalHelper.getColorSchema(context).primary,
+              ),
+              child: Text(
+                DateTimeHelper.formatDateTimeFromString(
+                  dateTimeString: item.date!,
+                  formar: 'dd\nMMM',
+                ),
+                style: GlobalHelper.getTextStyle(
+                  context,
+                  appTextStyle: AppTextStyle.LABEL_LARGE,
+                )?.copyWith(
+                  color: GlobalHelper.getColorSchema(context).onPrimary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
           Expanded(
-              flex: 2,
-              child: Center(
-                  child: Text(
+            flex: 2,
+            child: Center(
+              child: Text(
                 item.startTime,
-                style: GlobalHelper.getTextStyle(context,
-                    appTextStyle: AppTextStyle.BODY_MEDIUM),
-              ))),
+                style: GlobalHelper.getTextStyle(
+                  context,
+                  appTextStyle: AppTextStyle.BODY_MEDIUM,
+                ),
+              ),
+            ),
+          ),
           Expanded(
-              flex: 2,
-              child: Center(
-                  child: Text(
+            flex: 2,
+            child: Center(
+              child: Text(
                 item.endTime,
-                style: GlobalHelper.getTextStyle(context,
-                    appTextStyle: AppTextStyle.BODY_MEDIUM),
-              )))
+                style: GlobalHelper.getTextStyle(
+                  context,
+                  appTextStyle: AppTextStyle.BODY_MEDIUM,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -436,40 +469,38 @@ class HomeScreen extends AppWidget<HomeNotifier, void, void> {
 
   _onPressCreateAttendance(BuildContext context) async {
     await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => FaceRecognitionScreen(),
-        ));
+      context,
+      MaterialPageRoute(builder: (context) => FaceRecognitionScreen()),
+    );
     notifier.init();
   }
 
   _onPressEditNotification(BuildContext context) async {
     DialogHelper.showBottomDialog(
-        context: context,
-        title: "Edit waktu notifikasi",
-        content: DropdownMenu<int>(
-            initialSelection: notifier.timeNotification,
-            onSelected: (value) => _onSaveEditNotification(context, value!),
-            dropdownMenuEntries: notifier.listEditNotification));
+      context: context,
+      title: "Edit waktu notifikasi",
+      content: DropdownMenu<int>(
+        initialSelection: notifier.timeNotification,
+        onSelected: (value) => _onSaveEditNotification(context, value!),
+        dropdownMenuEntries: notifier.listEditNotification,
+      ),
+    );
   }
 
   _onPressLogout(BuildContext context) async {
     await SharedPreferencesHelper.logout();
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(
-        builder: (context) => LoginScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => LoginScreen()),
       (route) => false,
     );
   }
 
   _onPressSeeAll(BuildContext context) {
     Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => DetailAttendanceScreen(),
-        ));
+      context,
+      MaterialPageRoute(builder: (context) => DetailAttendanceScreen()),
+    );
   }
 
   _onSaveEditNotification(BuildContext context, int param) {

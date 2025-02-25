@@ -54,8 +54,10 @@ abstract class $PiketScheduleCopyWith<$Res> {
     String day,
     String shift,
     String? notes,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime createdAt,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime updatedAt,
+    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    DateTime createdAt,
+    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    DateTime updatedAt,
   });
 }
 
@@ -140,8 +142,10 @@ abstract class _$$PiketScheduleImplCopyWith<$Res>
     String day,
     String shift,
     String? notes,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime createdAt,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime updatedAt,
+    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    DateTime createdAt,
+    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    DateTime updatedAt,
   });
 }
 
@@ -212,7 +216,7 @@ class __$$PiketScheduleImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$PiketScheduleImpl implements _PiketSchedule {
-  _$PiketScheduleImpl({
+  const _$PiketScheduleImpl({
     required this.id,
     required this.userId,
     required this.day,
@@ -293,15 +297,15 @@ class _$PiketScheduleImpl implements _PiketSchedule {
 }
 
 abstract class _PiketSchedule implements PiketSchedule {
-  factory _PiketSchedule({
+  const factory _PiketSchedule({
     required final int id,
     required final int userId,
     required final String day,
     required final String shift,
     final String? notes,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
     required final DateTime createdAt,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
     required final DateTime updatedAt,
   }) = _$PiketScheduleImpl;
 
@@ -319,10 +323,10 @@ abstract class _PiketSchedule implements PiketSchedule {
   @override
   String? get notes;
   @override
-  @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+  @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
   DateTime get createdAt;
   @override
-  @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+  @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
   DateTime get updatedAt;
 
   /// Create a copy of PiketSchedule
@@ -344,7 +348,7 @@ mixin _$PiketActivity {
   @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
   DateTime get date => throw _privateConstructorUsedError;
   String get activity => throw _privateConstructorUsedError;
-  String get status => throw _privateConstructorUsedError;
+  String get status => throw _privateConstructorUsedError; // ongoing, completed
   String? get documentation => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
   @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
@@ -372,13 +376,16 @@ abstract class $PiketActivityCopyWith<$Res> {
   $Res call({
     int id,
     int userId,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime date,
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
+    DateTime date,
     String activity,
     String status,
     String? documentation,
     String? notes,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime createdAt,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime updatedAt,
+    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    DateTime createdAt,
+    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    DateTime updatedAt,
   });
 }
 
@@ -472,13 +479,16 @@ abstract class _$$PiketActivityImplCopyWith<$Res>
   $Res call({
     int id,
     int userId,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime date,
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
+    DateTime date,
     String activity,
     String status,
     String? documentation,
     String? notes,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime createdAt,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime updatedAt,
+    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    DateTime createdAt,
+    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    DateTime updatedAt,
   });
 }
 
@@ -561,10 +571,11 @@ class __$$PiketActivityImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$PiketActivityImpl implements _PiketActivity {
-  _$PiketActivityImpl({
+  const _$PiketActivityImpl({
     required this.id,
     required this.userId,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) required this.date,
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
+    required this.date,
     required this.activity,
     required this.status,
     this.documentation,
@@ -583,12 +594,13 @@ class _$PiketActivityImpl implements _PiketActivity {
   @override
   final int userId;
   @override
-  @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+  @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
   final DateTime date;
   @override
   final String activity;
   @override
   final String status;
+  // ongoing, completed
   @override
   final String? documentation;
   @override
@@ -655,18 +667,18 @@ class _$PiketActivityImpl implements _PiketActivity {
 }
 
 abstract class _PiketActivity implements PiketActivity {
-  factory _PiketActivity({
+  const factory _PiketActivity({
     required final int id,
     required final int userId,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
     required final DateTime date,
     required final String activity,
     required final String status,
     final String? documentation,
     final String? notes,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
     required final DateTime createdAt,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
     required final DateTime updatedAt,
   }) = _$PiketActivityImpl;
 
@@ -678,21 +690,21 @@ abstract class _PiketActivity implements PiketActivity {
   @override
   int get userId;
   @override
-  @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+  @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
   DateTime get date;
   @override
   String get activity;
   @override
-  String get status;
+  String get status; // ongoing, completed
   @override
   String? get documentation;
   @override
   String? get notes;
   @override
-  @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+  @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
   DateTime get createdAt;
   @override
-  @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+  @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
   DateTime get updatedAt;
 
   /// Create a copy of PiketActivity
@@ -744,14 +756,18 @@ abstract class $PiketReportCopyWith<$Res> {
   $Res call({
     int id,
     int userId,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime startDate,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime endDate,
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
+    DateTime startDate,
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
+    DateTime endDate,
     int totalActivities,
     int completedActivities,
     double completionRate,
     String? notes,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime createdAt,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime updatedAt,
+    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    DateTime createdAt,
+    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    DateTime updatedAt,
   });
 }
 
@@ -851,14 +867,18 @@ abstract class _$$PiketReportImplCopyWith<$Res>
   $Res call({
     int id,
     int userId,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime startDate,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime endDate,
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
+    DateTime startDate,
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
+    DateTime endDate,
     int totalActivities,
     int completedActivities,
     double completionRate,
     String? notes,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime createdAt,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson) DateTime updatedAt,
+    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    DateTime createdAt,
+    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    DateTime updatedAt,
   });
 }
 
@@ -947,12 +967,12 @@ class __$$PiketReportImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$PiketReportImpl implements _PiketReport {
-  _$PiketReportImpl({
+  const _$PiketReportImpl({
     required this.id,
     required this.userId,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
     required this.startDate,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
     required this.endDate,
     required this.totalActivities,
     required this.completedActivities,
@@ -972,10 +992,10 @@ class _$PiketReportImpl implements _PiketReport {
   @override
   final int userId;
   @override
-  @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+  @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
   final DateTime startDate;
   @override
-  @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+  @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
   final DateTime endDate;
   @override
   final int totalActivities;
@@ -1051,20 +1071,20 @@ class _$PiketReportImpl implements _PiketReport {
 }
 
 abstract class _PiketReport implements PiketReport {
-  factory _PiketReport({
+  const factory _PiketReport({
     required final int id,
     required final int userId,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
     required final DateTime startDate,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
     required final DateTime endDate,
     required final int totalActivities,
     required final int completedActivities,
     required final double completionRate,
     final String? notes,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
     required final DateTime createdAt,
-    @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+    @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
     required final DateTime updatedAt,
   }) = _$PiketReportImpl;
 
@@ -1076,10 +1096,10 @@ abstract class _PiketReport implements PiketReport {
   @override
   int get userId;
   @override
-  @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+  @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
   DateTime get startDate;
   @override
-  @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+  @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
   DateTime get endDate;
   @override
   int get totalActivities;
@@ -1090,10 +1110,10 @@ abstract class _PiketReport implements PiketReport {
   @override
   String? get notes;
   @override
-  @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+  @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
   DateTime get createdAt;
   @override
-  @JsonKey(fromJson: _dateFromJson, toJson: _dateToJson)
+  @JsonKey(fromJson: DateTime.parse, toJson: DateTime.toIso8601String)
   DateTime get updatedAt;
 
   /// Create a copy of PiketReport

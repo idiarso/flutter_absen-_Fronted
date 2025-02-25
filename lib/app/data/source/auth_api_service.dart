@@ -1,6 +1,4 @@
 import 'package:skansapung_presensi/core/constant/constant.dart';
-import 'package:skansapung_presensi/core/network/data_state.dart';
-import 'package:retrofit/http.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 import 'package:json_annotation/json_annotation.dart';

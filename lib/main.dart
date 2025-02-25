@@ -1,8 +1,5 @@
 import 'package:get/get.dart';
-import 'package:skansapung_presensi/app/presentation/login/login_screen.dart';
 import 'package:skansapung_presensi/core/di/dependency.dart';
-import 'package:skansapung_presensi/core/widget/error_app_widget.dart';
-import 'package:skansapung_presensi/core/widget/loading_app_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:skansapung_presensi/core/helper/notification_helper.dart';

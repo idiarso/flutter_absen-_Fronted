@@ -12,7 +12,7 @@ class FaceRecognitionNotifier extends AppProvider {
     init();
   }
 
-  FaceSDK _faceSDK = FaceSDK.instance;
+  final FaceSDK _faceSDK = FaceSDK.instance;
   MatchFacesImage? mfImage1;
   MatchFacesImage? mfImage2;
   Image? _currentImage;
@@ -54,10 +54,11 @@ class FaceRecognitionNotifier extends AppProvider {
     final response = await _faceSDK.startFaceCapture();
     final image = response.image;
     if (image != null) _setImage(image.image, image.imageType, 2);
-    if (_currentImage != null)
+    if (_currentImage != null) {
       _matchFaces();
-    else
+    } else {
       notifyListeners();
+    }
   }
 
   _matchFaces() async {
