@@ -8,16 +8,19 @@ import '../../../module/use_case/dashboard_get_statistics.dart';
 class DashboardBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => DashboardProvider(Get.find()));
+    // Register provider first
+    Get.lazyPut<DashboardProvider>(() => DashboardProvider(Get.find()));
     
-    Get.lazyPut(() => DashboardGetSummaryUseCase(Get.find()));
-    Get.lazyPut(() => DashboardGetRecentActivitiesUseCase(Get.find()));
-    Get.lazyPut(() => DashboardGetStatisticsUseCase(Get.find()));
+    // Register use cases
+    Get.lazyPut<DashboardGetSummaryUseCase>(() => DashboardGetSummaryUseCase(Get.find()));
+    Get.lazyPut<DashboardGetRecentActivitiesUseCase>(() => DashboardGetRecentActivitiesUseCase(Get.find()));
+    Get.lazyPut<DashboardGetStatisticsUseCase>(() => DashboardGetStatisticsUseCase(Get.find()));
     
-    Get.lazyPut(() => DashboardController(
-          Get.find(),
-          Get.find(),
-          Get.find(),
+    // Register controller last since it depends on use cases
+    Get.lazyPut<DashboardController>(() => DashboardController(
+          Get.find<DashboardGetSummaryUseCase>(),
+          Get.find<DashboardGetRecentActivitiesUseCase>(),
+          Get.find<DashboardGetStatisticsUseCase>(),
         ));
   }
 }
