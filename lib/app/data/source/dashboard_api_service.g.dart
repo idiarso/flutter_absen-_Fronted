@@ -66,7 +66,9 @@ Map<String, dynamic> _$DashboardStatisticsToJson(
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations
 
 class _DashboardApiService implements DashboardApiService {
-  _DashboardApiService(this._dio, {this.baseUrl, this.errorLogger});
+  _DashboardApiService(this._dio, {this.baseUrl, this.errorLogger}) {
+    baseUrl ??= 'https://app.sijasmkn1punggelan.org';
+  }
 
   final Dio _dio;
 

@@ -1,9 +1,15 @@
 import 'dart:io';
 
 import 'package:skansapung_presensi/app/data/source/photo_api_service.dart';
+import 'package:skansapung_presensi/app/module/repository/photo_repository.dart';
 import 'package:skansapung_presensi/core/constant/constant.dart';
 import 'package:skansapung_presensi/core/network/data_state.dart';
 import 'package:dio/dio.dart';
+
+abstract class PhotoRepository {
+  Future<DataState<String>> get();
+  Future<DataState<dynamic>> getBytes(String url);
+}
 
 class PhotoRepositoryImpl extends PhotoRepository {
   final PhotoApiService _photoApiService;

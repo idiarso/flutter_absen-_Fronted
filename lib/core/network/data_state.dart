@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:skansapung_presensi/core/network/base_response.dart';
+import 'package:skansapung_presensi/core/helper/error_handler.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 
@@ -48,17 +49,15 @@ Future<DataState<T>> handleResponse<T>(
           response: httpResponse.response,
           requestOptions: httpResponse.response.requestOptions);
     }
-  } on DioException catch (e) {
-    try {
-      final response = ErrorState.fromJson(jsonDecode(e.response.toString()));
-      return ErrorState(
-          message: '${e.response?.statusCode ?? ''} ${response.message}');
-    } catch (e1) {
-      return ErrorState(
-          message:
-              '${e.response?.statusCode ?? HttpStatus.badRequest} ${e.error ?? e}');
-    }
   } catch (e) {
-    return ErrorState(message: e.toString());
+    if (e is DioException) {
+      try {
+        final response = ErrorState.fromJson(jsonDecode(e.response.toString()));
+        return ErrorState(message: AppErrorHandler.handleError(e));
+      } catch (_) {
+        return ErrorState(message: AppErrorHandler.handleError(e));
+      }
+    }
+    return ErrorState(message: AppErrorHandler.handleError(e));
   }
 }

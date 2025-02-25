@@ -26,6 +26,20 @@ Map<String, dynamic> _$AttendanceRecordToJson(AttendanceRecord instance) =>
       'notes': instance.notes,
     };
 
+AttendanceResponse _$AttendanceResponseFromJson(Map<String, dynamic> json) =>
+    AttendanceResponse(
+      success: json['success'] as bool,
+      message: json['message'] as String,
+      data: json['data'],
+    );
+
+Map<String, dynamic> _$AttendanceResponseToJson(AttendanceResponse instance) =>
+    <String, dynamic>{
+      'success': instance.success,
+      'message': instance.message,
+      'data': instance.data,
+    };
+
 // **************************************************************************
 // RetrofitGenerator
 // **************************************************************************
