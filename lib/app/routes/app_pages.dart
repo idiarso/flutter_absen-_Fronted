@@ -11,6 +11,8 @@ import '../modules/jurnal_pkl/views/riwayat_kegiatan_view.dart';
 import '../modules/jurnal_pkl/views/laporan_pkl_view.dart';
 import '../modules/learning/bindings/learning_binding.dart';
 import '../modules/learning/views/learning_view.dart';
+import '../modules/face_recognition/bindings/face_recognition_binding.dart';
+import '../modules/face_recognition/face_recognition_screen.dart';
 
 abstract class Routes {
   Routes._();
@@ -21,6 +23,7 @@ abstract class Routes {
   static const LAPORAN_PKL = JURNAL_PKL + _Paths.LAPORAN_PKL;
   static const LEARNING = _Paths.LEARNING;
   static const DASHBOARD = _Paths.DASHBOARD;
+  static const FACE_RECOGNITION = _Paths.FACE_RECOGNITION;
 }
 
 abstract class _Paths {
@@ -32,6 +35,7 @@ abstract class _Paths {
   static const LAPORAN_PKL = '/laporan-pkl';
   static const LEARNING = '/learning';
   static const DASHBOARD = '/dashboard';
+  static const FACE_RECOGNITION = '/face-recognition';
 }
 
 class AppPages {
@@ -73,6 +77,11 @@ class AppPages {
       name: _Paths.DASHBOARD,
       page: () => const DashboardView(),
       binding: DashboardBinding(),
+    ),
+    GetPage(
+      name: _Paths.FACE_RECOGNITION,
+      page: () => FaceRecognitionScreen(),
+      binding: FaceRecognitionBinding(),
     ),
   ];
 }

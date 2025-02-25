@@ -1,9 +1,8 @@
 import 'package:skansapung_presensi/app/data/repository/attendance_repository.dart';
 import 'package:skansapung_presensi/app/data/repository/auth_repository.dart';
-import 'package:skansapung_presensi/app/data/repository/photo_repository.dart';
-import 'package:skansapung_presensi/app/data/repository/schedule_repository.dart';
-import 'package:skansapung_presensi/app/data/source/attendance_api_service.dart';
+import 'package:skansapung_presensi/app/module/repository/photo_repository.dart';
 import 'package:skansapung_presensi/app/data/source/auth_api_service.dart';
+import 'package:skansapung_presensi/app/data/source/dashboard_api_service.dart';
 import 'package:skansapung_presensi/app/data/source/photo_api_service.dart';
 import 'package:skansapung_presensi/app/data/source/schedule_api_service.dart';
 import 'package:skansapung_presensi/app/module/repository/attendance_repository.dart';
@@ -27,6 +26,7 @@ import 'package:skansapung_presensi/core/network/app_interceptor.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+import 'package:get/get.dart';
 
 final sl = GetIt.instance;
 
@@ -41,12 +41,19 @@ Future<void> initDependency() async {
       responseHeader: true,
       compact: true));
   sl.registerSingleton<Dio>(dio);
+  
+  // Also register for GetX
+  Get.put(dio);
 
   //apiservice
   sl.registerSingleton<AuthApiService>(AuthApiService(sl()));
   sl.registerSingleton<AttendanceApiService>(AttendanceApiService(sl()));
   sl.registerSingleton<ScheduleApiService>(ScheduleApiService(sl()));
   sl.registerSingleton<PhotoApiService>(PhotoApiService(sl()));
+  sl.registerSingleton<DashboardApiService>(DashboardApiService(sl()));
+  
+  // Also register DashboardApiService for GetX
+  Get.put(DashboardApiService(dio));
 
   //repositoy
   sl.registerSingleton<AuthRepository>(AuthRepositoryImpl(sl()));

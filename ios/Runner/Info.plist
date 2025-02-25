@@ -46,8 +46,10 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open.</string>
+	<string>Aplikasi membutuhkan lokasi Anda untuk pencatatan presensi</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Aplikasi membutuhkan lokasi Anda untuk pencatatan presensi</string>
 	<key>NSCameraUsageDescription</key>
-	<string>Requires access to your phone’s camera.</string>
+	<string>Aplikasi membutuhkan akses kamera untuk pengenalan wajah saat presensi</string>
 </dict>
 </plist>
