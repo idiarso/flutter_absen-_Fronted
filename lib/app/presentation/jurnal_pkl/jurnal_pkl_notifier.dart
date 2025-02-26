@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:skansapung_presensi/core/helper/shared_preferences_helper.dart';
-import 'package:skansapung_presensi/core/notifier/base_notifier.dart';
+import 'package:skansapung_presensi/core/provider/app_provider.dart';
 
-class JurnalPKLNotifier extends BaseNotifier {
+class JurnalPKLNotifier extends AppProvider {
   String userName = '';
 
   @override

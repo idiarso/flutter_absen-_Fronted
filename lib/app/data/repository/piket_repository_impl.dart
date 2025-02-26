@@ -13,7 +13,7 @@ class PiketRepositoryImpl {
       final result = await _provider.getSchedule();
       return DataSuccess(result);
     } on DioException catch (e) {
-      return DataFailed(e);
+      return DataFailed(e.message ?? 'Unknown error occurred');
     }
   }
 
@@ -22,7 +22,7 @@ class PiketRepositoryImpl {
       final result = await _provider.getMySchedule();
       return DataSuccess(result);
     } on DioException catch (e) {
-      return DataFailed(e);
+      return DataFailed(e.message ?? 'Unknown error occurred');
     }
   }
 
@@ -31,7 +31,7 @@ class PiketRepositoryImpl {
       await _provider.createSchedule(schedule);
       return const DataSuccess(null);
     } on DioException catch (e) {
-      return DataFailed(e);
+      return DataFailed(e.message ?? 'Unknown error occurred');
     }
   }
 
@@ -40,7 +40,7 @@ class PiketRepositoryImpl {
       await _provider.updateSchedule(id, schedule);
       return const DataSuccess(null);
     } on DioException catch (e) {
-      return DataFailed(e);
+      return DataFailed(e.message ?? 'Unknown error occurred');
     }
   }
 
@@ -49,7 +49,7 @@ class PiketRepositoryImpl {
       await _provider.deleteSchedule(id);
       return const DataSuccess(null);
     } on DioException catch (e) {
-      return DataFailed(e);
+      return DataFailed(e.message ?? 'Unknown error occurred');
     }
   }
 
@@ -66,7 +66,7 @@ class PiketRepositoryImpl {
       );
       return DataSuccess(result);
     } on DioException catch (e) {
-      return DataFailed(e);
+      return DataFailed(e.message ?? 'Unknown error occurred');
     }
   }
 }

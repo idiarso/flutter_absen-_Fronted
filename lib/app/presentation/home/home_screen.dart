@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:skansapung_presensi/app/module/entity/attendance.dart';
 import 'package:skansapung_presensi/app/presentation/detail_attendance/detail_attendance_screen.dart';
 import 'package:skansapung_presensi/app/presentation/face_recognition/face_recognition_screen.dart';
@@ -12,9 +10,6 @@ import 'package:skansapung_presensi/core/helper/global_helper.dart';
 import 'package:skansapung_presensi/core/helper/shared_preferences_helper.dart';
 import 'package:skansapung_presensi/core/widget/app_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/widgets.dart';
-import 'package:retrofit/http.dart';
 
 class HomeScreen extends AppWidget<HomeNotifier, void, void> {
   HomeScreen({super.key});
@@ -220,7 +215,9 @@ class HomeScreen extends AppWidget<HomeNotifier, void, void> {
                     const SizedBox(height: 4),
                     Text(
                       notifier.attendanceToday?.checkIn != null
-                          ? DateTimeHelper.formatTime(notifier.attendanceToday!.checkIn!)
+                          ? DateTimeHelper.formatTime(
+                            notifier.attendanceToday!.checkIn!,
+                          )
                           : '- : -',
                       style: GlobalHelper.getTextStyle(
                         context,
@@ -244,7 +241,9 @@ class HomeScreen extends AppWidget<HomeNotifier, void, void> {
                     const SizedBox(height: 4),
                     Text(
                       notifier.attendanceToday?.checkOut != null
-                          ? DateTimeHelper.formatTime(notifier.attendanceToday!.checkOut!)
+                          ? DateTimeHelper.formatTime(
+                            notifier.attendanceToday!.checkOut!,
+                          )
                           : '- : -',
                       style: GlobalHelper.getTextStyle(
                         context,
@@ -258,9 +257,11 @@ class HomeScreen extends AppWidget<HomeNotifier, void, void> {
           ),
           const SizedBox(height: 16),
           ElevatedButton(
-            onPressed: () => notifier.attendanceToday == null
-                ? _onPressPresensi(context)
-                : _onPressDetailAttendance(context),
+            onPressed:
+                () =>
+                    notifier.attendanceToday == null
+                        ? _onPressPresensi(context)
+                        : _onPressDetailAttendance(context),
             style: ElevatedButton.styleFrom(
               minimumSize: const Size.fromHeight(48),
               shape: RoundedRectangleBorder(
@@ -268,7 +269,9 @@ class HomeScreen extends AppWidget<HomeNotifier, void, void> {
               ),
             ),
             child: Text(
-              notifier.attendanceToday == null ? 'Presensi Sekarang' : 'Lihat Detail',
+              notifier.attendanceToday == null
+                  ? 'Presensi Sekarang'
+                  : 'Lihat Detail',
               style: GlobalHelper.getTextStyle(
                 context,
                 appTextStyle: AppTextStyle.LABEL_LARGE,
@@ -279,6 +282,7 @@ class HomeScreen extends AppWidget<HomeNotifier, void, void> {
       ),
     );
   }
+
   _thisMonthLayout(BuildContext context) {
     return Container(
       constraints: BoxConstraints(
@@ -429,7 +433,7 @@ class HomeScreen extends AppWidget<HomeNotifier, void, void> {
               child: Text(
                 DateTimeHelper.formatDateTimeFromString(
                   dateTimeString: item.date!,
-                  formar: 'dd\nMMM',
+                  format: 'dd\nMMM',
                 ),
                 style: GlobalHelper.getTextStyle(
                   context,
@@ -470,12 +474,19 @@ class HomeScreen extends AppWidget<HomeNotifier, void, void> {
     );
   }
 
-  _onPressCreateAttendance(BuildContext context) async {
+  _onPressPresensi(BuildContext context) async {
     await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => FaceRecognitionScreen()),
     );
     notifier.init();
+  }
+
+  _onPressDetailAttendance(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DetailAttendanceScreen()),
+    );
   }
 
   _onPressEditNotification(BuildContext context) async {

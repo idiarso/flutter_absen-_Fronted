@@ -1,6 +1,12 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesHelper {
+  static const String _keyUserName = 'user_name';
+
+  static Future<String?> getUserName() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_keyUserName);
+  }
   static setInt(String key, int value) async {
     final pref = await SharedPreferences.getInstance();
     pref.setInt(key, value);

@@ -1,61 +1,49 @@
-import 'package:skansapung_presensi/app/data/models/dashboard_model.dart' as dashboardModel;
-import 'package:skansapung_presensi/app/data/source/dashboard_api_service.dart' as dashboardService;
+import 'package:skansapung_presensi/app/data/models/dashboard_model.dart' as model;
+import 'package:skansapung_presensi/app/data/source/dashboard_api_service.dart' as api;
 import 'package:skansapung_presensi/app/module/repository/dashboard_repository.dart';
 import 'package:skansapung_presensi/core/network/data_state.dart';
 
 class DashboardRepositoryImpl extends DashboardRepository {
-  final dashboardService.DashboardApiService _dashboardApiService;
+  final api.DashboardApiService _dashboardApiService;
 
   DashboardRepositoryImpl(this._dashboardApiService);
 
   @override
-  Future<DataState<dashboardModel.DashboardSummary>> getSummary() async {
+  Future<DataState<model.DashboardSummary>> getSummary() async {
     try {
       final response = await _dashboardApiService.getSummary();
-      if (response.response.statusCode == 200 && response.data.success) {
-        return DataSuccess(dashboardModel.DashboardSummary.fromJson(response.data.data));
-      }
-      return DataFailed(
-        response.response.statusMessage ?? 'Unknown error occurred',
-        response.response.statusCode,
+      return SuccessState(
+        data: model.DashboardSummary.fromJson(response as Map<String, dynamic>),
       );
     } catch (e) {
-      return DataFailed(e.toString(), 500);
+      return ErrorState(message: e.toString());
     }
   }
 
   @override
-  Future<DataState<List<RecentActivity>>> getRecentActivities() async {
+  Future<DataState<List<model.RecentActivity>>> getRecentActivities() async {
     try {
       final response = await _dashboardApiService.getRecentActivities();
-      if (response.response.statusCode == 200 && response.data.success) {
-        return DataSuccess(
-          List<RecentActivity>.from(
-              response.data.data.map((item) => RecentActivity.fromJson(item))),
-        );
-      }
-      return DataFailed(
-        response.response.statusMessage ?? 'Unknown error occurred',
-        response.response.statusCode,
+      final List<dynamic> activitiesJson = response as List<dynamic>;
+      return SuccessState(
+        data: activitiesJson
+            .map((item) => model.RecentActivity.fromJson(item as Map<String, dynamic>))
+            .toList(),
       );
     } catch (e) {
-      return DataFailed(e.toString(), 500);
+      return ErrorState(message: e.toString());
     }
   }
 
   @override
-  Future<DataState<DashboardStatistics>> getStatistics() async {
+  Future<DataState<model.DashboardStatistics>> getStatistics() async {
     try {
       final response = await _dashboardApiService.getStatistics();
-      if (response.response.statusCode == 200 && response.data.success) {
-        return DataSuccess(DashboardStatistics.fromJson(response.data.data));
-      }
-      return DataFailed(
-        response.response.statusMessage ?? 'Unknown error occurred',
-        response.response.statusCode,
+      return SuccessState(
+        data: model.DashboardStatistics.fromJson(response as Map<String, dynamic>),
       );
     } catch (e) {
-      return DataFailed(e.toString(), 500);
+      return ErrorState(message: e.toString());
     }
   }
 }

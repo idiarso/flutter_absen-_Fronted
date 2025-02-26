@@ -41,6 +41,8 @@ mixin _$Attendance {
     required TResult Function(
       @JsonKey(name: 'start_time') String startTime,
       @JsonKey(name: 'end_time') String endTime,
+      @JsonKey(name: 'check_in') DateTime? checkIn,
+      @JsonKey(name: 'check_out') DateTime? checkOut,
       String? date,
     )
     entity,
@@ -52,6 +54,8 @@ mixin _$Attendance {
     TResult? Function(
       @JsonKey(name: 'start_time') String startTime,
       @JsonKey(name: 'end_time') String endTime,
+      @JsonKey(name: 'check_in') DateTime? checkIn,
+      @JsonKey(name: 'check_out') DateTime? checkOut,
       String? date,
     )?
     entity,
@@ -63,6 +67,8 @@ mixin _$Attendance {
     TResult Function(
       @JsonKey(name: 'start_time') String startTime,
       @JsonKey(name: 'end_time') String endTime,
+      @JsonKey(name: 'check_in') DateTime? checkIn,
+      @JsonKey(name: 'check_out') DateTime? checkOut,
       String? date,
     )?
     entity,
@@ -126,6 +132,8 @@ abstract class _$$AttendanceEntityImplCopyWith<$Res> {
   $Res call({
     @JsonKey(name: 'start_time') String startTime,
     @JsonKey(name: 'end_time') String endTime,
+    @JsonKey(name: 'check_in') DateTime? checkIn,
+    @JsonKey(name: 'check_out') DateTime? checkOut,
     String? date,
   });
 }
@@ -146,6 +154,8 @@ class __$$AttendanceEntityImplCopyWithImpl<$Res>
   $Res call({
     Object? startTime = null,
     Object? endTime = null,
+    Object? checkIn = freezed,
+    Object? checkOut = freezed,
     Object? date = freezed,
   }) {
     return _then(
@@ -160,6 +170,16 @@ class __$$AttendanceEntityImplCopyWithImpl<$Res>
                 ? _value.endTime
                 : endTime // ignore: cast_nullable_to_non_nullable
                     as String,
+        checkIn:
+            freezed == checkIn
+                ? _value.checkIn
+                : checkIn // ignore: cast_nullable_to_non_nullable
+                    as DateTime?,
+        checkOut:
+            freezed == checkOut
+                ? _value.checkOut
+                : checkOut // ignore: cast_nullable_to_non_nullable
+                    as DateTime?,
         date:
             freezed == date
                 ? _value.date
@@ -176,6 +196,8 @@ class _$AttendanceEntityImpl implements AttendanceEntity {
   _$AttendanceEntityImpl({
     @JsonKey(name: 'start_time') required this.startTime,
     @JsonKey(name: 'end_time') required this.endTime,
+    @JsonKey(name: 'check_in') this.checkIn,
+    @JsonKey(name: 'check_out') this.checkOut,
     this.date,
     final String? $type,
   }) : $type = $type ?? 'entity';
@@ -190,6 +212,12 @@ class _$AttendanceEntityImpl implements AttendanceEntity {
   @JsonKey(name: 'end_time')
   final String endTime;
   @override
+  @JsonKey(name: 'check_in')
+  final DateTime? checkIn;
+  @override
+  @JsonKey(name: 'check_out')
+  final DateTime? checkOut;
+  @override
   final String? date;
 
   @JsonKey(name: 'runtimeType')
@@ -197,7 +225,7 @@ class _$AttendanceEntityImpl implements AttendanceEntity {
 
   @override
   String toString() {
-    return 'Attendance.entity(startTime: $startTime, endTime: $endTime, date: $date)';
+    return 'Attendance.entity(startTime: $startTime, endTime: $endTime, checkIn: $checkIn, checkOut: $checkOut, date: $date)';
   }
 
   @override
@@ -208,12 +236,16 @@ class _$AttendanceEntityImpl implements AttendanceEntity {
             (identical(other.startTime, startTime) ||
                 other.startTime == startTime) &&
             (identical(other.endTime, endTime) || other.endTime == endTime) &&
+            (identical(other.checkIn, checkIn) || other.checkIn == checkIn) &&
+            (identical(other.checkOut, checkOut) ||
+                other.checkOut == checkOut) &&
             (identical(other.date, date) || other.date == date));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, startTime, endTime, date);
+  int get hashCode =>
+      Object.hash(runtimeType, startTime, endTime, checkIn, checkOut, date);
 
   /// Create a copy of Attendance
   /// with the given fields replaced by the non-null parameter values.
@@ -232,13 +264,15 @@ class _$AttendanceEntityImpl implements AttendanceEntity {
     required TResult Function(
       @JsonKey(name: 'start_time') String startTime,
       @JsonKey(name: 'end_time') String endTime,
+      @JsonKey(name: 'check_in') DateTime? checkIn,
+      @JsonKey(name: 'check_out') DateTime? checkOut,
       String? date,
     )
     entity,
     required TResult Function(double latitude, double longitude) paramEntity,
     required TResult Function(int month, int year) paramGetEntity,
   }) {
-    return entity(startTime, endTime, date);
+    return entity(startTime, endTime, checkIn, checkOut, date);
   }
 
   @override
@@ -247,13 +281,15 @@ class _$AttendanceEntityImpl implements AttendanceEntity {
     TResult? Function(
       @JsonKey(name: 'start_time') String startTime,
       @JsonKey(name: 'end_time') String endTime,
+      @JsonKey(name: 'check_in') DateTime? checkIn,
+      @JsonKey(name: 'check_out') DateTime? checkOut,
       String? date,
     )?
     entity,
     TResult? Function(double latitude, double longitude)? paramEntity,
     TResult? Function(int month, int year)? paramGetEntity,
   }) {
-    return entity?.call(startTime, endTime, date);
+    return entity?.call(startTime, endTime, checkIn, checkOut, date);
   }
 
   @override
@@ -262,6 +298,8 @@ class _$AttendanceEntityImpl implements AttendanceEntity {
     TResult Function(
       @JsonKey(name: 'start_time') String startTime,
       @JsonKey(name: 'end_time') String endTime,
+      @JsonKey(name: 'check_in') DateTime? checkIn,
+      @JsonKey(name: 'check_out') DateTime? checkOut,
       String? date,
     )?
     entity,
@@ -270,7 +308,7 @@ class _$AttendanceEntityImpl implements AttendanceEntity {
     required TResult orElse(),
   }) {
     if (entity != null) {
-      return entity(startTime, endTime, date);
+      return entity(startTime, endTime, checkIn, checkOut, date);
     }
     return orElse();
   }
@@ -319,6 +357,8 @@ abstract class AttendanceEntity implements Attendance {
   factory AttendanceEntity({
     @JsonKey(name: 'start_time') required final String startTime,
     @JsonKey(name: 'end_time') required final String endTime,
+    @JsonKey(name: 'check_in') final DateTime? checkIn,
+    @JsonKey(name: 'check_out') final DateTime? checkOut,
     final String? date,
   }) = _$AttendanceEntityImpl;
 
@@ -329,6 +369,10 @@ abstract class AttendanceEntity implements Attendance {
   String get startTime;
   @JsonKey(name: 'end_time')
   String get endTime;
+  @JsonKey(name: 'check_in')
+  DateTime? get checkIn;
+  @JsonKey(name: 'check_out')
+  DateTime? get checkOut;
   String? get date;
 
   /// Create a copy of Attendance
@@ -437,6 +481,8 @@ class _$AttendanceParamEntityImpl implements AttendanceParamEntity {
     required TResult Function(
       @JsonKey(name: 'start_time') String startTime,
       @JsonKey(name: 'end_time') String endTime,
+      @JsonKey(name: 'check_in') DateTime? checkIn,
+      @JsonKey(name: 'check_out') DateTime? checkOut,
       String? date,
     )
     entity,
@@ -452,6 +498,8 @@ class _$AttendanceParamEntityImpl implements AttendanceParamEntity {
     TResult? Function(
       @JsonKey(name: 'start_time') String startTime,
       @JsonKey(name: 'end_time') String endTime,
+      @JsonKey(name: 'check_in') DateTime? checkIn,
+      @JsonKey(name: 'check_out') DateTime? checkOut,
       String? date,
     )?
     entity,
@@ -467,6 +515,8 @@ class _$AttendanceParamEntityImpl implements AttendanceParamEntity {
     TResult Function(
       @JsonKey(name: 'start_time') String startTime,
       @JsonKey(name: 'end_time') String endTime,
+      @JsonKey(name: 'check_in') DateTime? checkIn,
+      @JsonKey(name: 'check_out') DateTime? checkOut,
       String? date,
     )?
     entity,
@@ -634,6 +684,8 @@ class _$AttendanceParamGetEntityImpl implements AttendanceParamGetEntity {
     required TResult Function(
       @JsonKey(name: 'start_time') String startTime,
       @JsonKey(name: 'end_time') String endTime,
+      @JsonKey(name: 'check_in') DateTime? checkIn,
+      @JsonKey(name: 'check_out') DateTime? checkOut,
       String? date,
     )
     entity,
@@ -649,6 +701,8 @@ class _$AttendanceParamGetEntityImpl implements AttendanceParamGetEntity {
     TResult? Function(
       @JsonKey(name: 'start_time') String startTime,
       @JsonKey(name: 'end_time') String endTime,
+      @JsonKey(name: 'check_in') DateTime? checkIn,
+      @JsonKey(name: 'check_out') DateTime? checkOut,
       String? date,
     )?
     entity,
@@ -664,6 +718,8 @@ class _$AttendanceParamGetEntityImpl implements AttendanceParamGetEntity {
     TResult Function(
       @JsonKey(name: 'start_time') String startTime,
       @JsonKey(name: 'end_time') String endTime,
+      @JsonKey(name: 'check_in') DateTime? checkIn,
+      @JsonKey(name: 'check_out') DateTime? checkOut,
       String? date,
     )?
     entity,

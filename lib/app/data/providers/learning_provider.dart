@@ -7,7 +7,18 @@ class LearningProvider {
 
   Future<List<LearningActivity>> getActivities() async {
     try {
-      return await _apiService.getActivities();
+      final response = await _apiService.getActivities();
+      if (response.data.success) {
+        final List<dynamic> activitiesJson =
+            response.data.data as List<dynamic>;
+        return activitiesJson
+            .map(
+              (json) => LearningActivity.fromJson(json as Map<String, dynamic>),
+            )
+            .toList();
+      } else {
+        throw response.data.message;
+      }
     } catch (e) {
       throw 'Gagal mendapatkan data aktivitas pembelajaran: ${e.toString()}';
     }
@@ -15,7 +26,14 @@ class LearningProvider {
 
   Future<LearningProgress> getProgress() async {
     try {
-      return await _apiService.getProgress();
+      final response = await _apiService.getProgress();
+      if (response.data.success) {
+        return LearningProgress.fromJson(
+          response.data.data as Map<String, dynamic>,
+        );
+      } else {
+        throw response.data.message;
+      }
     } catch (e) {
       throw 'Gagal mendapatkan progress pembelajaran: ${e.toString()}';
     }
@@ -23,7 +41,10 @@ class LearningProvider {
 
   Future<void> submitActivity(Map<String, dynamic> data) async {
     try {
-      await _apiService.submitActivity(data);
+      final response = await _apiService.submitActivity(data);
+      if (!response.data.success) {
+        throw response.data.message;
+      }
     } catch (e) {
       throw 'Gagal mengirim aktivitas pembelajaran: ${e.toString()}';
     }

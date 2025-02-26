@@ -11,6 +11,14 @@ _$AttendanceEntityImpl _$$AttendanceEntityImplFromJson(
 ) => _$AttendanceEntityImpl(
   startTime: json['start_time'] as String,
   endTime: json['end_time'] as String,
+  checkIn:
+      json['check_in'] == null
+          ? null
+          : DateTime.parse(json['check_in'] as String),
+  checkOut:
+      json['check_out'] == null
+          ? null
+          : DateTime.parse(json['check_out'] as String),
   date: json['date'] as String?,
   $type: json['runtimeType'] as String?,
 );
@@ -20,6 +28,8 @@ Map<String, dynamic> _$$AttendanceEntityImplToJson(
 ) => <String, dynamic>{
   'start_time': instance.startTime,
   'end_time': instance.endTime,
+  'check_in': instance.checkIn?.toIso8601String(),
+  'check_out': instance.checkOut?.toIso8601String(),
   'date': instance.date,
   'runtimeType': instance.$type,
 };

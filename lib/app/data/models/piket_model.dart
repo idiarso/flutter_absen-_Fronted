@@ -3,11 +3,20 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'piket_model.freezed.dart';
 part 'piket_model.g.dart';
 
-DateTime _dateFromJson(String date) => DateTime.parse(date);
+DateTime _dateFromJson(String date) {
+  try {
+    return DateTime.parse(date);
+  } catch (e) {
+    throw FormatException('Invalid date format: $date');
+  }
+}
+
 String _dateToJson(DateTime date) => date.toIso8601String();
 
 @freezed
 class PiketSchedule with _$PiketSchedule {
+  const PiketSchedule._();
+
   factory PiketSchedule({
     required int id,
     required int userId,
@@ -24,6 +33,8 @@ class PiketSchedule with _$PiketSchedule {
 
 @freezed
 class PiketActivity with _$PiketActivity {
+  const PiketActivity._();
+
   factory PiketActivity({
     required int id,
     required int userId,
@@ -42,6 +53,8 @@ class PiketActivity with _$PiketActivity {
 
 @freezed
 class PiketReport with _$PiketReport {
+  const PiketReport._();
+
   factory PiketReport({
     required int id,
     required int userId,
@@ -58,7 +71,3 @@ class PiketReport with _$PiketReport {
   factory PiketReport.fromJson(Map<String, dynamic> json) =>
       _$PiketReportFromJson(json);
 }
-
-// Add these helper functions at the top level
-DateTime _dateFromJson(String date) => DateTime.parse(date);
-String _dateToJson(DateTime date) => date.toIso8601String();
