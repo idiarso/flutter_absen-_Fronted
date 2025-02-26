@@ -1,4 +1,4 @@
-import 'package:skansapung_presensi/app/module/repository/photo_repository.dart';
+import 'package:skansapung_presensi/app/data/repository/photo_repository.dart';
 import 'package:skansapung_presensi/core/network/data_state.dart';
 import 'package:skansapung_presensi/core/use_case/app_use_case.dart';
 

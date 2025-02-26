@@ -16,7 +16,7 @@ class FaceRecognitionBinding extends Bindings {
 
     Get.lazyPut<Dio>(() => Dio());
     Get.lazyPut<PhotoApiService>(() => PhotoApiService(Get.find<Dio>()));
-    Get.put<PhotoRepository>(
+    Get.lazyPut<PhotoRepository>(
       () => PhotoRepositoryImpl(Get.find<PhotoApiService>()),
     );
     Get.lazyPut<PhotoGetBytesUseCase>(

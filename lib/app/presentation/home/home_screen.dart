@@ -187,95 +187,98 @@ class HomeScreen extends AppWidget<HomeNotifier, void, void> {
 
   _todayLayout(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        color: GlobalHelper.getColorSchema(context).primary,
+        color: GlobalHelper.getColorSchema(context).surfaceVariant,
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Text(
+            'Status Kehadiran Hari Ini',
+            style: GlobalHelper.getTextStyle(
+              context,
+              appTextStyle: AppTextStyle.TITLE_MEDIUM,
+            )?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: GlobalHelper.getColorSchema(context).onPrimary,
-                ),
-                child: Row(
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.today),
-                    const SizedBox(width: 5),
                     Text(
-                      DateTimeHelper.formatDateTime(
-                        dateTime: DateTime.now(),
-                        format: 'EEE, dd MMM yyyy',
+                      'Masuk',
+                      style: GlobalHelper.getTextStyle(
+                        context,
+                        appTextStyle: AppTextStyle.BODY_MEDIUM,
                       ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      notifier.attendanceToday?.checkIn != null
+                          ? DateTimeHelper.formatTime(notifier.attendanceToday!.checkIn!)
+                          : '- : -',
+                      style: GlobalHelper.getTextStyle(
+                        context,
+                        appTextStyle: AppTextStyle.TITLE_MEDIUM,
+                      )?.copyWith(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
               ),
-              const Expanded(child: SizedBox()),
-              (notifier.isLeaves)
-                  ? const SizedBox()
-                  : Container(
-                    padding: const EdgeInsets.all(5),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: GlobalHelper.getColorSchema(context).onPrimary,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Pulang',
+                      style: GlobalHelper.getTextStyle(
+                        context,
+                        appTextStyle: AppTextStyle.BODY_MEDIUM,
+                      ),
                     ),
-                    child: Text(
-                      (notifier.schedule?.isWfa ?? false) ? 'WFA' : 'WFO',
+                    const SizedBox(height: 4),
+                    Text(
+                      notifier.attendanceToday?.checkOut != null
+                          ? DateTimeHelper.formatTime(notifier.attendanceToday!.checkOut!)
+                          : '- : -',
+                      style: GlobalHelper.getTextStyle(
+                        context,
+                        appTextStyle: AppTextStyle.TITLE_MEDIUM,
+                      )?.copyWith(fontWeight: FontWeight.bold),
                     ),
-                  ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              _timeTodayLayout(
-                context,
-                'Datang',
-                notifier.attendanceToday?.startTime ?? '-',
-              ),
-              _timeTodayLayout(
-                context,
-                'Pulang',
-                notifier.attendanceToday?.endTime ?? '-',
+                  ],
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          (notifier.isLeaves)
-              ? Text(
-                'Anda hari ini sedang cuti',
-                style: GlobalHelper.getTextStyle(
-                  context,
-                  appTextStyle: AppTextStyle.TITLE_LARGE,
-                )?.copyWith(
-                  color: GlobalHelper.getColorSchema(context).onPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
-              )
-              : SizedBox(
-                width: double.maxFinite,
-                child: FilledButton(
-                  onPressed: () => _onPressCreateAttendance(context),
-                  style: FilledButton.styleFrom(
-                    backgroundColor:
-                        GlobalHelper.getColorSchema(context).onPrimary,
-                    foregroundColor:
-                        GlobalHelper.getColorSchema(context).primary,
-                  ),
-                  child: const Text('Buat Kehadiran'),
-                ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () => notifier.attendanceToday == null
+                ? _onPressPresensi(context)
+                : _onPressDetailAttendance(context),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size.fromHeight(48),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
               ),
+            ),
+            child: Text(
+              notifier.attendanceToday == null ? 'Presensi Sekarang' : 'Lihat Detail',
+              style: GlobalHelper.getTextStyle(
+                context,
+                appTextStyle: AppTextStyle.LABEL_LARGE,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
-
   _thisMonthLayout(BuildContext context) {
     return Container(
       constraints: BoxConstraints(
