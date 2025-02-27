@@ -65,7 +65,56 @@ class JurnalPKLController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchJurnalList();
+    fetchInitialData();
+  }
+
+  Future<void> fetchInitialData() async {
+    try {
+      isLoading.value = true;
+      await Future.wait([
+        fetchJurnalList(),
+        fetchProgress(),
+        fetchStudentData(),
+      ]);
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to fetch initial data: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchProgress() async {
+    try {
+      final progress = await _getProgressUseCase();
+      progressPKL.value = progress.progressPercentage ?? 0.0;
+      totalHariKerja.value = progress.totalHariKerja ?? 0;
+      totalApproved.value = progress.totalApproved ?? 0;
+      totalPending.value = progress.totalPending ?? 0;
+      totalRejected.value = progress.totalRejected ?? 0;
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to fetch progress: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+  }
+
+  Future<void> fetchStudentData() async {
+    try {
+      final student = await _getStudentUseCase();
+      studentData.value = student;
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to fetch student data: $e',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
   }
 
   void navigateToInputKegiatan() {
@@ -171,9 +220,9 @@ class JurnalPKLController extends GetxController {
     }
   }
 
-  Future<void> generatePDF() async {
+  Future<void> exportToPDF() async {
     try {
-      isLoading.value = true;
+      isLoadingLaporan.value = true;
 
       final pdf = pw.Document();
       final authController = Get.find<AuthController>();
@@ -181,52 +230,57 @@ class JurnalPKLController extends GetxController {
 
       pdf.addPage(
         pw.MultiPage(
-          build:
-              (context) => [
-                pw.Header(level: 0, child: pw.Text('Jurnal PKL Report')),
-                pw.SizedBox(height: 20),
-                pw.Text('Nama Siswa: ${authController.user.value!.name}'),
-                pw.SizedBox(height: 10),
-                pw.Text('Tanggal: ${dateFormat.format(DateTime.now())}'),
-                pw.SizedBox(height: 20),
-                pw.TableHelper.fromTextArray(
-                  context: context,
-                  data: <List<String>>[
-                    ['Tanggal', 'Kegiatan', 'Lokasi'],
-                    ...jurnalList
-                        .map(
-                          (jurnal) => [
-                            dateFormat.format(
-                              jurnal.createdAt ?? DateTime.now(),
-                            ),
-                            jurnal.kegiatan ?? '',
-                            jurnal.lokasi ?? '',
-                          ],
-                        )
-                        .toList(),
-                  ],
-                ),
+          build: (context) => [
+            pw.Header(level: 0, child: pw.Text('Laporan PKL')),
+            pw.SizedBox(height: 20),
+            pw.Text('Nama Siswa: ${authController.user.value!.name}'),
+            pw.Text('NIS: ${studentData.value?.nis ?? "-"}'),
+            pw.SizedBox(height: 10),
+            pw.Text('Tanggal: ${dateFormat.format(DateTime.now())}'),
+            pw.SizedBox(height: 20),
+            pw.Paragraph(text: 'Progress PKL: ${(progressPKL.value * 100).toInt()}%'),
+            pw.Paragraph(text: 'Total Hari Kerja: ${totalHariKerja.value}'),
+            pw.SizedBox(height: 20),
+            pw.TableHelper.fromTextArray(
+              context: context,
+              headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+              data: <List<String>>[
+                ['Tanggal', 'Kegiatan', 'Lokasi', 'Status'],
+                ...jurnalList
+                    .map(
+                      (jurnal) => [
+                        dateFormat.format(
+                          jurnal.createdAt ?? DateTime.now(),
+                        ),
+                        jurnal.kegiatan ?? '',
+                        jurnal.lokasi ?? '',
+                        jurnal.status ?? '',
+                      ],
+                    )
+                    .toList(),
               ],
+            ),
+          ],
         ),
       );
 
       final output = await getTemporaryDirectory();
-      final file = File('${output.path}/jurnal_pkl_report.pdf');
+      final file = File('${output.path}/laporan_pkl_${DateFormat('yyyyMMdd').format(DateTime.now())}.pdf');
       await file.writeAsBytes(await pdf.save());
 
       Get.snackbar(
         'Success',
-        'PDF generated successfully at ${file.path}',
+        'PDF exported successfully',
         snackPosition: SnackPosition.BOTTOM,
       );
     } catch (e) {
       Get.snackbar(
         'Error',
-        'Failed to generate PDF: $e',
+        'Failed to export PDF: $e',
         snackPosition: SnackPosition.BOTTOM,
       );
     } finally {
-      isLoading.value = false;
+      isLoadingLaporan.value = false;
     }
   }
 }
