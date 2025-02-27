@@ -9,9 +9,13 @@ class DashboardView extends GetView<DashboardController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: const Text('Dashboard', style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
       ),
       body: Obx(
         () => controller.isLoading.value
@@ -19,6 +23,7 @@ class DashboardView extends GetView<DashboardController> {
             : RefreshIndicator(
                 onRefresh: controller.loadData,
                 child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
@@ -93,26 +98,46 @@ class DashboardView extends GetView<DashboardController> {
   ) {
     return Container(
       width: 100,
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            color.withOpacity(0.1),
+            color.withOpacity(0.05),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         children: [
-          Icon(icon, color: color),
-          const SizedBox(height: 8),
+          Icon(icon, color: color, size: 28),
+          const SizedBox(height: 12),
           Text(
             '${(percentage * 100).toStringAsFixed(1)}%',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
               color: color,
             ),
           ),
+          const SizedBox(height: 4),
           Text(
             title,
-            style: const TextStyle(fontSize: 12),
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.black87,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -167,21 +192,41 @@ class DashboardView extends GetView<DashboardController> {
     }
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: color.withOpacity(0.1),
-          child: Icon(icon, color: color, size: 20),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(icon, color: color, size: 24),
         ),
-        title: Text(activity.title),
-        subtitle: Text(
-          activity.description,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+        title: Text(
+          activity.title,
+          style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
         ),
-        trailing: Text(
-          _formatDate(activity.timestamp),
-          style: const TextStyle(color: Colors.grey),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(
+            activity.description,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: Colors.black54, height: 1.2),
+          ),
+        ),
+        trailing: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              _formatDate(activity.timestamp),
+              style: TextStyle(color: Colors.black54, fontSize: 12),
+            ),
+          ],
         ),
       ),
     );
