@@ -23,36 +23,30 @@ class PiketView extends GetView<PiketController> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        return Column(
-          children: [
-            TabBar(
-              controller: TabController(
-                length: 3,
-                vsync: Navigator.of(context),
-                initialIndex: controller.selectedTab.value,
-              ),
-              onTap: controller.changeTab,
-              tabs: const [
-                Tab(text: 'Jadwal'),
-                Tab(text: 'Kegiatan'),
-                Tab(text: 'Laporan'),
-              ],
-            ),
-            Expanded(
-              child: TabBarView(
-                controller: TabController(
-                  length: 3,
-                  vsync: Navigator.of(context),
-                  initialIndex: controller.selectedTab.value,
-                ),
-                children: [
-                  _buildScheduleTab(),
-                  _buildActivityTab(),
-                  _buildReportTab(),
+        return DefaultTabController(
+          length: 3,
+          initialIndex: controller.selectedTab.value,
+          child: Column(
+            children: [
+              TabBar(
+                onTap: controller.changeTab,
+                tabs: const [
+                  Tab(text: 'Jadwal'),
+                  Tab(text: 'Kegiatan'),
+                  Tab(text: 'Laporan'),
                 ],
               ),
-            ),
-          ],
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    _buildScheduleTab(),
+                    _buildActivityTab(),
+                    _buildReportTab(),
+                  ],
+                ),
+              ),
+            ],
+          ),
         );
       }),
       floatingActionButton: Obx(() {
@@ -73,16 +67,11 @@ class PiketView extends GetView<PiketController> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Jadwal Piket Saya',
-            style: Get.textTheme.titleLarge,
-          ),
+          Text('Jadwal Piket Saya', style: Get.textTheme.titleLarge),
           const SizedBox(height: 16),
           Obx(() {
             if (controller.mySchedules.isEmpty) {
-              return const Center(
-                child: Text('Tidak ada jadwal piket'),
-              );
+              return const Center(child: Text('Tidak ada jadwal piket'));
             }
 
             return ListView.builder(
@@ -96,32 +85,29 @@ class PiketView extends GetView<PiketController> {
                     leading: const Icon(Icons.schedule),
                     title: Text('Hari ${schedule.day}'),
                     subtitle: Text('Shift: ${schedule.shift}'),
-                    trailing: schedule.notes != null
-                        ? IconButton(
-                            icon: const Icon(Icons.info),
-                            onPressed: () => Get.snackbar(
-                              'Catatan',
-                              schedule.notes!,
-                              duration: const Duration(seconds: 3),
-                            ),
-                          )
-                        : null,
+                    trailing:
+                        schedule.notes != null
+                            ? IconButton(
+                              icon: const Icon(Icons.info),
+                              onPressed:
+                                  () => Get.snackbar(
+                                    'Catatan',
+                                    schedule.notes!,
+                                    duration: const Duration(seconds: 3),
+                                  ),
+                            )
+                            : null,
                   ),
                 );
               },
             );
           }),
           const SizedBox(height: 32),
-          Text(
-            'Semua Jadwal Piket',
-            style: Get.textTheme.titleLarge,
-          ),
+          Text('Semua Jadwal Piket', style: Get.textTheme.titleLarge),
           const SizedBox(height: 16),
           Obx(() {
             if (controller.schedules.isEmpty) {
-              return const Center(
-                child: Text('Tidak ada jadwal piket'),
-              );
+              return const Center(child: Text('Tidak ada jadwal piket'));
             }
 
             return ListView.builder(
@@ -135,16 +121,18 @@ class PiketView extends GetView<PiketController> {
                     leading: const Icon(Icons.schedule),
                     title: Text('Hari ${schedule.day}'),
                     subtitle: Text('Shift: ${schedule.shift}'),
-                    trailing: schedule.notes != null
-                        ? IconButton(
-                            icon: const Icon(Icons.info),
-                            onPressed: () => Get.snackbar(
-                              'Catatan',
-                              schedule.notes!,
-                              duration: const Duration(seconds: 3),
-                            ),
-                          )
-                        : null,
+                    trailing:
+                        schedule.notes != null
+                            ? IconButton(
+                              icon: const Icon(Icons.info),
+                              onPressed:
+                                  () => Get.snackbar(
+                                    'Catatan',
+                                    schedule.notes!,
+                                    duration: const Duration(seconds: 3),
+                                  ),
+                            )
+                            : null,
                   ),
                 );
               },
@@ -162,9 +150,7 @@ class PiketView extends GetView<PiketController> {
         Expanded(
           child: Obx(() {
             if (controller.activities.isEmpty) {
-              return const Center(
-                child: Text('Tidak ada kegiatan piket'),
-              );
+              return const Center(child: Text('Tidak ada kegiatan piket'));
             }
 
             return ListView.builder(
@@ -222,20 +208,24 @@ class PiketView extends GetView<PiketController> {
               Expanded(
                 child: DropdownButtonFormField<String>(
                   value: controller.selectedStatus.value,
-                  decoration: const InputDecoration(
-                    labelText: 'Status',
-                  ),
+                  decoration: const InputDecoration(labelText: 'Status'),
                   items: const [
                     DropdownMenuItem(value: null, child: Text('Semua')),
-                    DropdownMenuItem(value: 'ongoing', child: Text('Berlangsung')),
-                    DropdownMenuItem(value: 'completed', child: Text('Selesai')),
+                    DropdownMenuItem(
+                      value: 'ongoing',
+                      child: Text('Berlangsung'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'completed',
+                      child: Text('Selesai'),
+                    ),
                   ],
                   onChanged: controller.updateStatus,
                 ),
               ),
               IconButton(
                 icon: const Icon(Icons.date_range),
-                onPressed: () => _showDateRangePicker(context),
+                onPressed: () => _showDateRangePicker(Get.context!),
               ),
             ],
           ),
@@ -255,7 +245,7 @@ class PiketView extends GetView<PiketController> {
                 child: ElevatedButton.icon(
                   icon: const Icon(Icons.add_chart),
                   label: const Text('Buat Laporan'),
-                  onPressed: () => _showReportDialog(context),
+                  onPressed: () => _showReportDialog(Get.context!),
                 ),
               ),
             ],
@@ -264,9 +254,7 @@ class PiketView extends GetView<PiketController> {
         Expanded(
           child: Obx(() {
             if (controller.reports.isEmpty) {
-              return const Center(
-                child: Text('Tidak ada laporan'),
-              );
+              return const Center(child: Text('Tidak ada laporan'));
             }
 
             return ListView.builder(
@@ -314,21 +302,13 @@ class PiketView extends GetView<PiketController> {
             break;
         }
       },
-      itemBuilder: (context) => [
-        if (activity.status == 'ongoing')
-          const PopupMenuItem(
-            value: 'complete',
-            child: Text('Selesai'),
-          ),
-        const PopupMenuItem(
-          value: 'edit',
-          child: Text('Edit'),
-        ),
-        const PopupMenuItem(
-          value: 'delete',
-          child: Text('Hapus'),
-        ),
-      ],
+      itemBuilder:
+          (context) => [
+            if (activity.status == 'ongoing')
+              const PopupMenuItem(value: 'complete', child: Text('Selesai')),
+            const PopupMenuItem(value: 'edit', child: Text('Edit')),
+            const PopupMenuItem(value: 'delete', child: Text('Hapus')),
+          ],
     );
   }
 
@@ -342,9 +322,7 @@ class PiketView extends GetView<PiketController> {
             children: [
               TextField(
                 controller: controller.activityController,
-                decoration: const InputDecoration(
-                  labelText: 'Kegiatan',
-                ),
+                decoration: const InputDecoration(labelText: 'Kegiatan'),
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
@@ -356,9 +334,14 @@ class PiketView extends GetView<PiketController> {
                 maxLines: 2,
               ),
               const SizedBox(height: 16),
-              Obx(() => controller.imagePath.value != null
-                  ? Text('File: ${controller.imagePath.value!.split('/').last}')
-                  : const SizedBox.shrink()),
+              Obx(
+                () =>
+                    controller.imagePath.value != null
+                        ? Text(
+                          'File: ${controller.imagePath.value!.split('/').last}',
+                        )
+                        : const SizedBox.shrink(),
+              ),
               ElevatedButton.icon(
                 icon: const Icon(Icons.photo),
                 label: const Text('Pilih Dokumentasi'),
@@ -404,9 +387,7 @@ class PiketView extends GetView<PiketController> {
             children: [
               TextField(
                 controller: controller.activityController,
-                decoration: const InputDecoration(
-                  labelText: 'Kegiatan',
-                ),
+                decoration: const InputDecoration(labelText: 'Kegiatan'),
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
@@ -460,18 +441,13 @@ class PiketView extends GetView<PiketController> {
         title: const Text('Konfirmasi'),
         content: const Text('Anda yakin ingin menghapus kegiatan ini?'),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Batal'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('Batal')),
           ElevatedButton(
             onPressed: () {
               controller.deleteActivity(activity.id);
               Get.back();
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text('Hapus'),
           ),
         ],
@@ -517,15 +493,10 @@ class PiketView extends GetView<PiketController> {
             children: [
               const Text(
                 'Buat Laporan Piket',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Pilih rentang tanggal untuk membuat laporan piket',
-              ),
+              const Text('Pilih rentang tanggal untuk membuat laporan piket'),
               const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,

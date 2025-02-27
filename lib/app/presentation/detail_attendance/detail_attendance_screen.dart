@@ -48,8 +48,8 @@ class DetailAttendanceScreen
                     initialSelection: 2024,
                     enabled: !notifier.isLoading,
                     menuStyle: MenuStyle(
-                      elevation: const WidgetStatePropertyAll(8),
-                      shadowColor: const WidgetStatePropertyAll(
+                      elevation: const MaterialStatePropertyAll(8),
+                      shadowColor: const MaterialStatePropertyAll(
                         Colors.black54,
                       ),
                     ),
@@ -177,16 +177,13 @@ class DetailAttendanceScreen
                                 child: Text(
                                   DateTimeHelper.formatDateTimeFromString(
                                     dateTimeString: item.date!,
-                                    formar: 'dd\nMMM',
+                                    format: 'dd\nMMM',  // Fixed typo from 'formar' to 'format'
                                   ),
                                   style: GlobalHelper.getTextStyle(
                                     context,
                                     appTextStyle: AppTextStyle.LABEL_LARGE,
                                   )?.copyWith(
-                                    color:
-                                        GlobalHelper.getColorSchema(
-                                          context,
-                                        ).onPrimary,
+                                    color: GlobalHelper.getColorSchema(context).onPrimary,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
