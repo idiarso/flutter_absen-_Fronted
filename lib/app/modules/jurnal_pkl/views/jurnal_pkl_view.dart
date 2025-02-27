@@ -10,6 +10,9 @@ class JurnalPKLView extends GetView<JurnalPKLController> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Jurnal PKL'),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.blue,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -17,214 +20,118 @@ class JurnalPKLView extends GetView<JurnalPKLController> {
           ),
         ],
       ),
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        
-        return Column(
-          children: [
-            _buildQuickStats(),
-            _buildFilters(),
-            Expanded(child: _buildJurnalList()),
-          ],
-        );
-      }),
+      body: Obx(
+        () => controller.isLoading.value
+            ? const Center(child: CircularProgressIndicator())
+            : Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.blue.shade50,
+                      Colors.white,
+                    ],
+                  ),
+                ),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Search Bar with Hero Animation
+                        Hero(
+                          tag: 'searchBar',
+                          child: Material(
+                            elevation: 2,
+                            shadowColor: Colors.black26,
+                            borderRadius: BorderRadius.circular(30),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).cardColor,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: TextField(
+                                decoration: InputDecoration(
+                                  hintText: 'Cari jurnal...',
+                                  border: InputBorder.none,
+                                  icon: Icon(Icons.search, color: Theme.of(context).primaryColor),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        
+                        // Quick Actions Grid with Staggered Animation
+                        GridView.count(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                          children: List.generate(
+                            4,
+                            (index) => AnimatedScale(
+                              scale: 1.0,
+                              duration: Duration(milliseconds: 300 + (index * 100)),
+                              child: _buildActionCard(
+                                title: _getActionTitle(index),
+                                icon: _getActionIcon(index),
+                                color: _getActionColor(index),
+                                onTap: () => _handleActionTap(index),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+      ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showInputDialog(context),
+        onPressed: controller.navigateToInputKegiatan,
         child: const Icon(Icons.add),
       ),
     );
   }
 
-  Widget _buildQuickStats() {
-    return Obx(() {
-      final progress = controller.progress.value;
-      if (progress == null) return const SizedBox.shrink();
-
-      return Container(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildStatCard('Total Hari', progress.totalDays.toString(), Colors.blue),
-            _buildStatCard('Selesai', progress.completedDays.toString(), Colors.green),
-            _buildStatCard('Progress', '${(progress.progressPercentage * 100).toStringAsFixed(1)}%', Colors.orange),
-          ],
-        ),
-      );
-    });
-  }
-
-  Widget _buildStatCard(String title, String value, Color color) {
+  Widget _buildActionCard({
+    required String title,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
     return Card(
-      color: color.withOpacity(0.1),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Text(title, style: TextStyle(color: color)),
-            Text(value, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
-          ],
-        ),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
       ),
-    );
-  }
-
-  Widget _buildFilters() {
-    return Builder(
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextField(
-              decoration: const InputDecoration(
-                hintText: 'Cari jurnal...',
-                prefixIcon: Icon(Icons.search),
-              ),
-              onChanged: controller.updateSearchQuery,
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    value: controller.selectedStatus.value,
-                    decoration: const InputDecoration(
-                      labelText: 'Status',
-                    ),
-                    items: const [
-                      DropdownMenuItem(value: null, child: Text('Semua')),
-                      DropdownMenuItem(value: 'draft', child: Text('Draft')),
-                      DropdownMenuItem(value: 'submitted', child: Text('Submitted')),
-                      DropdownMenuItem(value: 'approved', child: Text('Approved')),
-                      DropdownMenuItem(value: 'rejected', child: Text('Rejected')),
-                    ],
-                    onChanged: controller.updateStatusFilter,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.date_range),
-                  onPressed: () => _showDateRangePicker(context),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildJurnalList() {
-    return Obx(() {
-      final jurnals = controller.jurnalList;
-      if (jurnals.isEmpty) {
-        return const Center(child: Text('Tidak ada jurnal'));
-      }
-
-      return ListView.builder(
-        itemCount: jurnals.length,
-        itemBuilder: (context, index) {
-          final jurnal = jurnals[index];
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: ListTile(
-              title: Text(jurnal.kegiatan),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Lokasi: ${jurnal.lokasi}'),
-                  Text('Tanggal: ${jurnal.tanggal}'),
-                ],
-              ),
-              trailing: _buildStatusChip(jurnal.status),
-              onTap: () => _showDetailDialog(context, jurnal.id!),
-            ),
-          );
-        },
-      );
-    });
-  }
-
-  Widget _buildStatusChip(String status) {
-    Color color;
-    switch (status) {
-      case 'approved':
-        color = Colors.green;
-        break;
-      case 'rejected':
-        color = Colors.red;
-        break;
-      case 'submitted':
-        color = Colors.orange;
-        break;
-      default:
-        color = Colors.grey;
-    }
-
-    return Chip(
-      label: Text(
-        status.toUpperCase(),
-        style: const TextStyle(color: Colors.white, fontSize: 12),
-      ),
-      backgroundColor: color,
-    );
-  }
-
-  Future<void> _showInputDialog(BuildContext context) async {
-    await Get.dialog(
-      Dialog(
-        child: Padding(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
           padding: const EdgeInsets.all(16),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextField(
-                controller: controller.kegiatanController,
-                decoration: const InputDecoration(
-                  labelText: 'Kegiatan',
-                ),
-                maxLines: 3,
+              Icon(
+                icon,
+                size: 40,
+                color: color,
               ),
               const SizedBox(height: 8),
-              DropdownButtonFormField<String>(
-                value: controller.lokasiController.text.isEmpty ? null : controller.lokasiController.text,
-                decoration: const InputDecoration(
-                  labelText: 'Lokasi',
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
                 ),
-                items: controller.locations
-                    .map((location) => DropdownMenuItem(
-                          value: location.name,
-                          child: Text(location.name),
-                        ))
-                    .toList(),
-                onChanged: (value) => controller.lokasiController.text = value ?? '',
-              ),
-              const SizedBox(height: 16),
-              Obx(() => controller.imagePath.value != null
-                  ? Text('File: ${controller.imagePath.value!.split('/').last}')
-                  : const SizedBox.shrink()),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.photo),
-                label: const Text('Pilih Dokumentasi'),
-                onPressed: controller.pickImage,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Get.back(),
-                    child: const Text('Batal'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      controller.submitJurnal();
-                      Get.back();
-                    },
-                    child: const Text('Submit'),
-                  ),
-                ],
               ),
             ],
           ),
@@ -233,70 +140,90 @@ class JurnalPKLView extends GetView<JurnalPKLController> {
     );
   }
 
-  Future<void> _showDetailDialog(BuildContext context, int id) async {
-    await controller.fetchJurnalDetail(id);
-    
-    await Get.dialog(
-      Dialog(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Obx(() {
-            final jurnal = controller.selectedJurnal.value;
-            if (jurnal == null) return const CircularProgressIndicator();
+  Widget _buildStatusChip(String status) {
+    Color color;
+    switch (status.toLowerCase()) {
+      case 'approved':
+        color = Colors.green;
+        break;
+      case 'rejected':
+        color = Colors.red;
+        break;
+      case 'pending':
+        color = Colors.orange;
+        break;
+      default:
+        color = Colors.grey;
+    }
 
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Kegiatan:', style: Theme.of(context).textTheme.titleMedium),
-                Text(jurnal.kegiatan),
-                const SizedBox(height: 8),
-                Text('Lokasi:', style: Theme.of(context).textTheme.titleMedium),
-                Text(jurnal.lokasi ?? '-'),
-                const SizedBox(height: 8),
-                Text('Status:', style: Theme.of(context).textTheme.titleMedium),
-                _buildStatusChip(jurnal.status),
-                if (jurnal.catatan != null) ...[
-                  const SizedBox(height: 8),
-                  Text('Catatan:', style: Theme.of(context).textTheme.titleMedium),
-                  Text(jurnal.catatan!),
-                ],
-                const SizedBox(height: 8),
-                if (jurnal.filename != null)
-                  Image.network(
-                    "https://app.sijasmkn1punggelan.org/storage/jurnal_pkl/${jurnal.filename}",
-                    height: 200,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Get.back(),
-                      child: const Text('Tutup'),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          }),
-        ),
+    return Chip(
+      label: Text(
+        status,
+        style: const TextStyle(color: Colors.white),
       ),
+      backgroundColor: color,
     );
   }
 
-  Future<void> _showDateRangePicker(BuildContext context) async {
-    final DateTimeRange? result = await showDateRangePicker(
-      context: context,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now(),
-      currentDate: DateTime.now(),
-    );
+  String _getActionTitle(int index) {
+    switch (index) {
+      case 0:
+        return 'Input Kegiatan';
+      case 1:
+        return 'Riwayat Kegiatan';
+      case 2:
+        return 'Laporan PKL';
+      case 3:
+        return 'Info PKL';
+      default:
+        return '';
+    }
+  }
 
-    if (result != null) {
-      controller.updateDateRange(result.start, result.end);
+  IconData _getActionIcon(int index) {
+    switch (index) {
+      case 0:
+        return Icons.edit_note;
+      case 1:
+        return Icons.history;
+      case 2:
+        return Icons.assessment;
+      case 3:
+        return Icons.info;
+      default:
+        return Icons.circle;
+    }
+  }
+
+  Color _getActionColor(int index) {
+    switch (index) {
+      case 0:
+        return Colors.blue;
+      case 1:
+        return Colors.green;
+      case 2:
+        return Colors.orange;
+      case 3:
+        return Colors.purple;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  void _handleActionTap(int index) {
+    switch (index) {
+      case 0:
+        controller.navigateToInputKegiatan();
+        break;
+      case 1:
+        controller.navigateToRiwayatKegiatan();
+        break;
+      case 2:
+        controller.navigateToLaporanPKL();
+        break;
+      case 3:
+        // Info PKL action
+        break;
     }
   }
 }

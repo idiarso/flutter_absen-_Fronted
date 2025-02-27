@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/jurnal_pkl_controller.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class LaporanPKLView extends GetView<JurnalPKLController> {
   const LaporanPKLView({Key? key}) : super(key: key);
@@ -21,148 +20,132 @@ class LaporanPKLView extends GetView<JurnalPKLController> {
           ),
         ],
       ),
-      body: Obx(() {
-        final progress = controller.progress.value;
-        if (progress == null) return const Center(child: CircularProgressIndicator());
-        
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Progress Card
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      const Text(
-                        'Progress PKL',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+      body: Obx(() => controller.isLoadingLaporan.value
+          ? const Center(child: CircularProgressIndicator())
+          : Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.brown.shade50,
+                    Colors.white,
+                  ],
+                ),
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Progress Card with Animation
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      child: Card(
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      CircularPercentIndicator(
-                        radius: 60,
-                        lineWidth: 10,
-                        percent: progress.progressPercentage,
-                        center: Text(
-                          '${(progress.progressPercentage * 100).toInt()}%',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            children: [
+                              const Text(
+                                'Progress PKL',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              TweenAnimationBuilder<double>(
+                                tween: Tween<double>(
+                                  begin: 0,
+                                  end: controller.progressPKL.value,
+                                ),
+                                duration: const Duration(milliseconds: 1500),
+                                builder: (context, value, child) {
+                                  return CircularPercentIndicator(
+                                    radius: 80,
+                                    lineWidth: 12,
+                                    percent: value,
+                                    center: Text(
+                                      '${(value * 100).toInt()}%',
+                                      style: const TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    progressColor: Colors.brown,
+                                    backgroundColor: Colors.brown.withAlpha(51),
+                                    animation: true,
+                                    animationDuration: 1500,
+                                    circularStrokeCap: CircularStrokeCap.round,
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 24),
+                              Text(
+                                '${controller.totalHariKerja} Hari Kerja',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        progressColor: Colors.brown,
-                        backgroundColor: Colors.brown.withOpacity(0.2),
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        '${progress.totalDays} Hari Kerja',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
+                    ),
+                    const SizedBox(height: 24),
 
-              // Status Jurnal Card
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Status Jurnal',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                    // Status Jurnal Card with Animation
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      child: Card(
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Status Jurnal',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              _buildStatusItem(
+                                'Disetujui',
+                                controller.totalApproved.value,
+                                Colors.green,
+                              ),
+                              const SizedBox(height: 16),
+                              _buildStatusItem(
+                                'Menunggu',
+                                controller.totalPending.value,
+                                Colors.orange,
+                              ),
+                              const SizedBox(height: 16),
+                              _buildStatusItem(
+                                'Ditolak',
+                                controller.totalRejected.value,
+                                Colors.red,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      _buildStatusItem(
-                        'Disetujui',
-                        progress.approvedCount,
-                        Colors.green,
-                      ),
-                      const SizedBox(height: 8),
-                      _buildStatusItem(
-                        'Menunggu',
-                        progress.pendingCount,
-                        Colors.orange,
-                      ),
-                      const SizedBox(height: 8),
-                      _buildStatusItem(
-                        'Ditolak',
-                        progress.rejectedCount,
-                        Colors.red,
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 16),
-
-              // Monthly Progress Card
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Progress Bulanan',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: controller.monthlyProgress.length,
-                        itemBuilder: (context, index) {
-                          final item = controller.monthlyProgress[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  item.month,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                LinearPercentIndicator(
-                                  lineHeight: 8,
-                                  percent: item.percentage,
-                                  backgroundColor: Colors.brown.withOpacity(0.2),
-                                  progressColor: Colors.brown,
-                                  barRadius: const Radius.circular(4),
-                                  trailing: Text(
-                                    '${(item.percentage * 100).toInt()}%',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      }),
+            )),
     );
   }
 

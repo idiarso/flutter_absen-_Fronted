@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/jurnal_pkl_controller.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../../data/models/jurnal_pkl_model.dart';
 
 class InputKegiatanView extends GetView<JurnalPKLController> {
   const InputKegiatanView({Key? key}) : super(key: key);
@@ -20,7 +22,7 @@ class InputKegiatanView extends GetView<JurnalPKLController> {
                   title: const Text('Kamera'),
                   onTap: () {
                     Navigator.pop(context);
-                    controller.pickImage();
+                    controller.pickImage(ImageSource.camera);
                   },
                 ),
                 ListTile(
@@ -28,7 +30,7 @@ class InputKegiatanView extends GetView<JurnalPKLController> {
                   title: const Text('Galeri'),
                   onTap: () {
                     Navigator.pop(context);
-                    controller.pickImage();
+                    controller.pickImage(ImageSource.gallery);
                   },
                 ),
               ],
@@ -70,17 +72,17 @@ class InputKegiatanView extends GetView<JurnalPKLController> {
                 return;
               }
 
-              final jurnal = {
-                'userId': controller.studentData.value?.id ?? 0,
-                'tanggal': DateTime.now().toIso8601String(),
-                'kegiatan': kegiatanController.text,
-                'lokasi': lokasiController.text,
-                'status': 'draft',
-                'createdAt': DateTime.now().toIso8601String(),
-                'updatedAt': DateTime.now().toIso8601String(),
-              };
+              final jurnal = JurnalPKL(
+                userId: controller.studentData.value?.id ?? 0,
+                tanggal: controller.selectedDate.value.toString(),
+                kegiatan: kegiatanController.text,
+                lokasi: lokasiController.text,
+                status: 'draft',
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+              );
 
-              controller.submitJurnal(null, jurnal);
+              controller.submitJurnal(jurnal.kegiatan, jurnal.lokasi);
             },
           ),
         ],
@@ -90,63 +92,118 @@ class InputKegiatanView extends GetView<JurnalPKLController> {
             controller.isLoading.value
                 ? const Center(child: CircularProgressIndicator())
                 : SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 24,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Info PKL
-                      Card(
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Lokasi PKL: ${controller.studentData.value?.lokasi ?? 'Belum ada'}',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Pembimbing: ${controller.studentData.value?.pembimbing ?? 'Belum ada'}',
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                            ],
+                      // Info PKL Card
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [Colors.blue[400]!, Colors.blue[600]!],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.blue[300]!.withAlpha(76),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.location_on,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Lokasi PKL: ${controller.studentData.value?.lokasi ?? 'Belum ada'}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                const Icon(Icons.person, color: Colors.white),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Pembimbing: ${controller.studentData.value?.pembimbing ?? 'Belum ada'}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 24),
 
-                      // Tanggal
+                      // Tanggal Card
                       Card(
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text(
-                                'Tanggal',
+                                'Tanggal Kegiatan',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 12),
                               InkWell(
                                 onTap: () => controller.selectDate(context),
                                 child: Container(
-                                  padding: const EdgeInsets.all(12),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey),
+                                    border: Border.all(
+                                      color: Colors.grey[300]!,
+                                    ),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Row(
                                     children: [
-                                      const Icon(Icons.calendar_today),
+                                      const Icon(
+                                        Icons.calendar_today,
+                                        size: 20,
+                                      ),
                                       const SizedBox(width: 8),
-                                      Text(controller.selectedDate.value),
+                                      Text(
+                                        controller.selectedDate.value
+                                            .toString(),
+                                        style: const TextStyle(fontSize: 16),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -323,7 +380,10 @@ class InputKegiatanView extends GetView<JurnalPKLController> {
                             return;
                           }
 
-                          controller.submitJurnal();
+                          controller.submitJurnal(
+                            kegiatanController.text,
+                            lokasiController.text,
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
